@@ -4,35 +4,31 @@ import { useNavigate } from "react-router-dom";
 import "./PreLogin.css";
 import { AuthContext } from "../../context/AuthContext";
 function Login(): JSX.Element {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useContext(AuthContext);
-
   const navigate = useNavigate();
 
-  function handleLogin(e: React.FormEvent) {
+   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (username === "user1" && password === "qwerty") {
-      login("ttata");
+    try {
+      await login(email, password);
       navigate("/main");
-    } else {
-      console.log("3");
-
-      alert("Invalid credentials");
+    } catch (error) {
+      alert((error as Error).message);
     }
-  }
+  };
 
   return (
     <div>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <div className="Loginbox">
-          <label>Username:</label>
+          <label>Email:</label>
           <input
             type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
 
