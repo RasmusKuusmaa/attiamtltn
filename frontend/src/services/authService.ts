@@ -1,6 +1,7 @@
 import { resolveNaptr } from "dns";
 import { LoginResponse, ErrorResponse, RegisterReguest } from "../types";
 import { data, Register } from "react-router-dom";
+import { error } from "console";
 
 const API_URL = "http://localhost:8080/auth";
 
