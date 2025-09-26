@@ -2,16 +2,17 @@ import React, { createContext, useState, ReactNode } from "react";
 import { AuthContextType } from "../types";
 import { authService } from "../services/authService";
 
-// The default value should match the type, but will be overridden by the provider.
 export const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
   token: null,
-  login: async () => {},
+  login: async (_email: string, _password: string) => {},
   logout: () => {},
 });
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+  const [token, setToken] = useState<string | null>(
+    localStorage.getItem("token")
+  );
 
   const login = async (email: string, password: string) => {
     try {
@@ -29,11 +30,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("token");
   };
 
-  // --- THE FIX IS HERE ---
-  // 1. Derive the isAuthenticated status directly from the token state.
   const isAuthenticated = !!token;
-
-  // 2. Include isAuthenticated in the value passed to the provider.
   const value = {
     isAuthenticated,
     token,

@@ -15,3 +15,9 @@ export interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
 }
+
+export interface RegisterReguest{
+  username: string;
+  email: string;
+  password: string;
+}
