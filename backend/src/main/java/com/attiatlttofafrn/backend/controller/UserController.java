@@ -1,11 +1,14 @@
 package com.attiatlttofafrn.backend.controller;
 
+import java.time.LocalDateTime;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attiatlttofafrn.backend.service.TaskService;
 import com.attiatlttofafrn.backend.service.UserService;
 
 @RestController
@@ -13,9 +16,11 @@ import com.attiatlttofafrn.backend.service.UserService;
 public class UserController {
 
     private final UserService userService;
+    private final TaskService taskService;
 
-    public UserController(UserService service) {
-        this.userService = service;
+    public UserController(UserService userService, TaskService taskService) {
+        this.userService = userService;
+        this.taskService = taskService;
     }
 
     @GetMapping("/me")
@@ -27,7 +32,33 @@ public class UserController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/tasks")
+    public ResponseEntity<?> getUserTasks(Authentication authentication) {
+        String email = authentication.getName();
+
+        return userService.findByEmail(email)
+                .map(user -> ResponseEntity.ok(
+                taskService.getTasksForUser(user)
+                        .stream()
+                        .map(task -> new TaskResponse(
+                        task.getTitle(),
+                        task.getCompleted(),
+                        task.getCreatedAt(),
+                        task.getCompletedAt()))
+                        .toList())
+                ).orElse(ResponseEntity.notFound().build());
+    }
+
     private record UserResponse(String username, String email) {
+
+    }
+
+    private record TaskResponse(
+            String title,
+            Boolean completed,
+            LocalDateTime startedAt,
+            LocalDateTime completedAt
+            ) {
 
     }
 
