@@ -37,4 +37,26 @@ public class TaskService {
         task.setCreatedAt(LocalDateTime.now());
         return taskRepository.save(task);
     }
+
+    public boolean toggleTaskCompletion(Long taskId, User user) {
+        return taskRepository.findById(taskId)
+                .map(task -> {
+                    if (!task.getUser().getUser_id().equals(user.getUser_id())) {
+                        throw new SecurityException("You cannot modify this task");
+                    }
+
+                    if (!task.getCompleted()) {
+                        task.setCompleted(true);
+                        task.setCompletedAt(LocalDateTime.now());
+                    } else {
+                        task.setCompleted(false);
+                        task.setCompletedAt(null);
+                    }
+
+                    taskRepository.save(task);
+                    return true;
+                })
+                .orElse(false);
+    }
+
 }

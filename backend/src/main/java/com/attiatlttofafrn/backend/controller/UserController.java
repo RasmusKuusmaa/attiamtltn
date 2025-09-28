@@ -2,6 +2,7 @@ package com.attiatlttofafrn.backend.controller;
 
 import java.time.LocalDateTime;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -80,6 +81,26 @@ public class UserController {
                     return ResponseEntity.ok(response);
                 })
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("/tasks/{taskId}/complete")
+    public ResponseEntity<?> completeTask(Authentication auth, @PathVariable Long taskId) {
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .map(user -> {
+                    try {
+                        boolean updated = taskService.toggleTaskCompletion(taskId, user);
+                        if (updated) {
+                            return ResponseEntity.ok().build();
+                        } else {
+                            return ResponseEntity.notFound().build();
+                        }
+                    } catch (SecurityException e) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+                    }
+                })
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
     private record UserResponse(String username, String email) {
