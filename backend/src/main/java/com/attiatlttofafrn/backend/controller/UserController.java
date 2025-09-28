@@ -56,7 +56,7 @@ public class UserController {
     private record TaskResponse(
             String title,
             Boolean completed,
-            LocalDateTime startedAt,
+            LocalDateTime createdAt,
             LocalDateTime completedAt
             ) {
 

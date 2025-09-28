@@ -18,3 +18,18 @@ export async function getCurrentUser(token: string){
 
     return response.json();
 }
+
+
+export async function getUserTasks(token: string){
+    const response = await fetch(`${API_URL}/tasks`,{
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok){
+        throw new Error("Failet to fetch user Tasks");
+    }
+    return response.json();
+}
