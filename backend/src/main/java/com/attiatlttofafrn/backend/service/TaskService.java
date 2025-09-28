@@ -1,5 +1,6 @@
 package com.attiatlttofafrn.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -26,5 +27,14 @@ public class TaskService {
             taskRepository.delete(task);
             return true;
         }).orElse(false);
+    }
+
+    public Task createTask(User user, String title) {
+        Task task = new Task();
+        task.setUser(user);
+        task.setTitle(title);
+        task.setCompleted(false);
+        task.setCreatedAt(LocalDateTime.now());
+        return taskRepository.save(task);
     }
 }

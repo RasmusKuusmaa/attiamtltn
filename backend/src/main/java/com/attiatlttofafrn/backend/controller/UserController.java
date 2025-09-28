@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attiatlttofafrn.backend.model.Task;
 import com.attiatlttofafrn.backend.service.TaskService;
 import com.attiatlttofafrn.backend.service.UserService;
 
@@ -63,7 +64,29 @@ public class UserController {
         }
     }
 
+    @PostMapping("/tasks")
+    public ResponseEntity<?> addTask(Authentication auth, @RequestBody TaskRequest request) {
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .map(user -> {
+                    Task task = taskService.createTask(user, request.title());
+                    TaskResponse response = new TaskResponse(
+                            task.getTask_id(),
+                            task.getTitle(),
+                            task.getCompleted(),
+                            task.getCreatedAt(),
+                            task.getCompletedAt());
+                    return ResponseEntity.ok(response);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     private record UserResponse(String username, String email) {
+
+    }
+
+    private record TaskRequest(String title) {
 
     }
 
