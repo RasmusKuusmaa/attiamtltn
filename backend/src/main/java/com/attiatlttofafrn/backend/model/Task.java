@@ -11,7 +11,7 @@ public class Task {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer task_id;
+    private Long task_id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -29,11 +29,11 @@ public class Task {
     @Column(name = "completed_at")
     private LocalDateTime completedAt;
 
-    public Integer getTask_id() {
+    public Long getTask_id() {
         return task_id;
     }
 
-    public void setTask_id(Integer task_id) {
+    public void setTask_id(Long task_id) {
         this.task_id = task_id;
     }
 

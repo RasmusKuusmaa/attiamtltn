@@ -20,4 +20,11 @@ public class TaskService {
     public List<Task> getTasksForUser(User user) {
         return taskRepository.findByUser(user);
     }
+
+    public boolean deleteTask(Long id) {
+        return taskRepository.findById(id).map(task -> {
+            taskRepository.delete(task);
+            return true;
+        }).orElse(false);
+    }
 }
