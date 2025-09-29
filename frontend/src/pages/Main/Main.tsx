@@ -1,38 +1,22 @@
 import { JSX, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import {useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserTasks } from "../../services/userService";
 import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
-
-
+import "./Main.css";
 
 function Main(): JSX.Element {
-  const {setContent} = useContext(TopBarContext);
-
-  useEffect(() => {
-    setContent(
-      <div>
-        <h2>
-          das main page
-        </h2>
-        </div>
-    )
-  }, [])
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
 
-  function handleLogout() {
-    logout();
-    navigate("/login");
-  }
+  const { setContent } = useContext(TopBarContext);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-
 
     //get username
     getCurrentUser(token)
@@ -42,24 +26,51 @@ function Main(): JSX.Element {
     // get user tasks
     getUserTasks(token)
       .then((data) => setTasks(data))
-      .catch((err) => console.error(err));  
+      .catch((err) => console.error(err));
   }, []);
+  useEffect(() => {
+    setContent(
+      <div className="topbar-content">
+        <h1>Hello {username}</h1>
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    );
+  }, [username, setContent]);
 
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
 
+  const handleDelete = (index: number) => {
+    console.log(`Delete task ${index}`);
+  };
+  const handleToggle = (index: number) => {
+    console.log(`completed task ${index}`);
+  };
 
   return (
     <>
-      <h1>Hello {username}</h1>
-      <button onClick={handleLogout}>Logout</button>
-
-
-      <ul>
+      <div className="task-container">
         {tasks.map((task, index) => (
-          <li key={index}>
-            <p>{task.title}</p>
-          </li>
+          <div key={index} className="task-item">
+            <div className="task-left">
+              <input
+                type="checkbox"
+                checked={task.completed}
+                onChange={() => handleToggle(index)}
+              />
+              <p>{task.title}</p>
+            </div>
+            <button
+              className="task-delete-button"
+              onClick={() => handleDelete(index)}
+            >
+              Delete
+            </button>
+          </div>
         ))}
-      </ul>
+      </div>
     </>
   );
 }
