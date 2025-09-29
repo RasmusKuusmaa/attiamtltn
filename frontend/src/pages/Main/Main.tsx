@@ -49,8 +49,18 @@ function Main(): JSX.Element {
     console.log(`completed task ${index}`);
   };
 
+  const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const handleAddTask = () => {
+    console.log(newTaskTitle);
+    setNewTaskTitle("");
+    setIsNewTaskModalOpen(false);
+  };
   return (
     <>
+      <button  className="new-task-button"
+      onClick={() => setIsNewTaskModalOpen(true)}>Add a task</button>
+
       <div className="task-container">
         {tasks.map((task, index) => (
           <div key={index} className="task-item">
@@ -71,6 +81,25 @@ function Main(): JSX.Element {
           </div>
         ))}
       </div>
+
+      
+      {isNewTaskModalOpen && (
+        <div className="task-new-modal-overlay">
+          <div className="task-new-modal">
+            <h3>Add New Task</h3>
+            <input
+              type="text"
+              value={newTaskTitle}
+              onChange={(e) => setNewTaskTitle(e.target.value)}
+              placeholder="Task title"
+            />
+            <div className="task-new-modal-buttons">
+              <button onClick={handleAddTask}>Add</button>
+              <button onClick={() => setIsNewTaskModalOpen(false)}>Cancel</button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
