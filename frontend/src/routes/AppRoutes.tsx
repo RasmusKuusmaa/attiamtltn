@@ -5,20 +5,35 @@ import Login from "../pages/PreLogin/Login";
 import Signup from "../pages/PreLogin/Signup";
 import Main from "../pages/Main/Main";
 import { AuthContext } from "../context/AuthContext";
+import Stats from "../pages/Stats/Stats";
+import MainLayout from "../layout/MainLayout";
+import TopBarProvider from "../context/TopBarcontext";
 
 function AppRoutes(): JSX.Element {
   const { isAuthenticated } = useContext(AuthContext);
 
   return (
-        <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route
-        path="/main"
-        element={isAuthenticated ? <Main /> : <Navigate to="/login" />}
-      />
-      <Route path="*" element={<Navigate to="/login" />} />
-    </Routes>
+    <TopBarProvider>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        {isAuthenticated ? (
+          <Route element={<MainLayout />}>
+            <Route
+              path="/main"
+              element={isAuthenticated ? <Main /> : <Navigate to="/login" />}
+            />
+            <Route
+              path="/stats"
+              element={isAuthenticated ? <Stats /> : <Navigate to="/login" />}
+            />
+            <Route path="*" element={<Navigate to="/dashboard" />} />
+          </Route>
+        ) : (
+          <Route path="*" element={<Navigate to="/login" />} />
+        )}
+      </Routes>
+    </TopBarProvider>
   );
 }
 export default AppRoutes;

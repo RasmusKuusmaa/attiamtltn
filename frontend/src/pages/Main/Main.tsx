@@ -1,12 +1,24 @@
 import { JSX, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import { data, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { getCurrentUser, getUserTasks } from "../../services/userService";
 import { Task } from "../../types/Task";
+import { TopBarContext } from "../../context/TopBarcontext";
 
 
 
 function Main(): JSX.Element {
+  const {setContent} = useContext(TopBarContext);
+
+  useEffect(() => {
+    setContent(
+      <div>
+        <h2>
+          das main page
+        </h2>
+        </div>
+    )
+  }, [])
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");

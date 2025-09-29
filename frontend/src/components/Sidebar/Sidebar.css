@@ -1,0 +1,27 @@
+.sidebar{
+    width: 10vw;
+    background-color: red;
+    color: white;
+    padding: 20px;
+    flex-shrink: 0;
+
+}
+
+.sidebar nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar nav ul li {
+    margin: 15px 0;
+}
+
+.sidebar nav ul li a {
+    text-decoration: none;
+    color: lightblue;
+    font-weight: 500;
+}
+
+.sidebar nav ul li a.active{
+    color: darkblue;
+}
