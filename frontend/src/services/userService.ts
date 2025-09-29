@@ -33,3 +33,19 @@ export async function getUserTasks(token: string){
     }
     return response.json();
 }
+
+export async function AddNewTask(token: string, title: string){
+    const response = await fetch(`${API_URL}/tasks`, {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({title}),
+    });
+    if (!response.ok){
+        throw new Error("Failed to add task");
+
+    }
+    return response.json();
+}

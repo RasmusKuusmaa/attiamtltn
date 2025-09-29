@@ -1,7 +1,11 @@
 import { JSX, useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { getCurrentUser, getUserTasks } from "../../services/userService";
+import {
+  AddNewTask,
+  getCurrentUser,
+  getUserTasks,
+} from "../../services/userService";
 import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
 import "./Main.css";
@@ -13,9 +17,8 @@ function Main(): JSX.Element {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const { setContent } = useContext(TopBarContext);
-
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) return;
 
     //get username
@@ -51,15 +54,23 @@ function Main(): JSX.Element {
 
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
-  const handleAddTask = () => {
-    console.log(newTaskTitle);
+  const handleAddTask = async () => {
+    await AddNewTask(token, newTaskTitle);
+
+    const updatedTasks = await getUserTasks(token);
+    setTasks(updatedTasks);
+
     setNewTaskTitle("");
     setIsNewTaskModalOpen(false);
   };
   return (
     <>
-      <button  className="new-task-button"
-      onClick={() => setIsNewTaskModalOpen(true)}>Add a task</button>
+      <button
+        className="new-task-button"
+        onClick={() => setIsNewTaskModalOpen(true)}
+      >
+        Add a task
+      </button>
 
       <div className="task-container">
         {tasks.map((task, index) => (
@@ -82,7 +93,6 @@ function Main(): JSX.Element {
         ))}
       </div>
 
-      
       {isNewTaskModalOpen && (
         <div className="task-new-modal-overlay">
           <div className="task-new-modal">
@@ -95,7 +105,9 @@ function Main(): JSX.Element {
             />
             <div className="task-new-modal-buttons">
               <button onClick={handleAddTask}>Add</button>
-              <button onClick={() => setIsNewTaskModalOpen(false)}>Cancel</button>
+              <button onClick={() => setIsNewTaskModalOpen(false)}>
+                Cancel
+              </button>
             </div>
           </div>
         </div>
