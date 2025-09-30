@@ -11,15 +11,18 @@ import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
 import "./Main.css";
 import { getCurrentUser } from "../../services/userService";
+import { getUserDailies } from "../../services/dailyService";
+import { Daily } from "../../types/Daily";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
-
+  const [dailies, setDailies] = useState<Daily[]>([]);
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
+
   useEffect(() => {
     if (!token) return;
 
@@ -32,7 +35,14 @@ function Main(): JSX.Element {
     getUserTasks(token)
       .then((data) => setTasks(data))
       .catch((err) => console.error(err));
+
+    //get user Dailies
+    getUserDailies(token)
+      .then((data) => setDailies(data))
+      .catch((err) => console.error(err));
   }, []);
+
+  //load topbar content
   useEffect(() => {
     setContent(
       <div className="topbar-content">
@@ -74,34 +84,54 @@ function Main(): JSX.Element {
     setIsNewTaskModalOpen(false);
   };
   return (
-    <>
-      <button
-        className="new-task-button"
-        onClick={() => setIsNewTaskModalOpen(true)}
-      >
-        Add a task
-      </button>
+    <div className="mainpage-wrapper">
+      <div>
+        <button
+          className="new-task-button"
+          onClick={() => setIsNewTaskModalOpen(true)}
+        >
+          Add a task
+        </button>
 
-      <div className="task-container">
-        {tasks.map((task, index) => (
-          <div key={index} className="task-item">
-            <div className="task-left">
-              <input
-                type="checkbox"
-                checked={task.completed}
-                onChange={() => handleToggle(task.task_id)}
-              />
-              <p>{task.title}</p>
+        <div className="task-container">
+          {tasks.map((task, index) => (
+            <div key={index} className="task-item">
+              <div className="task-left">
+                <input
+                  type="checkbox"
+                  checked={task.completed}
+                  onChange={() => handleToggle(task.task_id)}
+                />
+                <p>{task.title}</p>
+              </div>
+              <button
+                className="task-delete-button"
+                onClick={() => handleDelete(task.task_id)}
+              >
+                Delete
+              </button>
             </div>
-            <button
-              className="task-delete-button"
-              onClick={() => handleDelete(task.task_id)}
-            >
-              Delete
-            </button>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
+
+      <div>
+        <button className="new-task-button">Add a daily</button>
+
+        <div className="task-container">
+          {dailies.map((daily, index) => (
+            <div key={index} className="task-item">
+              <div className="task-left">
+                <input type="checkbox" checked={daily.completed} />
+                <p>{daily.title}</p>
+                <p>Streak: {daily.streak}</p>
+              </div>
+              <button className="task-delete-button">Delete</button>
+            </div>
+          ))}
+        </div>
+      </div>
+      {/* Modals */}
 
       {isNewTaskModalOpen && (
         <div className="task-new-modal-overlay">
@@ -122,7 +152,7 @@ function Main(): JSX.Element {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

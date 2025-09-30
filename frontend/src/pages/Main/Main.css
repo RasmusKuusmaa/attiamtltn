@@ -1,3 +1,8 @@
+.mainpage-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
 .topbar-content {
   display: flex;
   flex-direction: row;
