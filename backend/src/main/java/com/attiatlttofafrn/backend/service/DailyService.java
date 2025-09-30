@@ -1,5 +1,6 @@
 package com.attiatlttofafrn.backend.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -28,6 +29,15 @@ public class DailyService {
                     return true;
 
                 }).orElse(false);
+    }
 
+    public Daily createDaily(User user, String title) {
+        Daily daily = new Daily();
+        daily.setUser(user);
+        daily.setTitle(title);
+        daily.setCompleted(false);
+        daily.setCreatedAt(LocalDateTime.now());
+        daily.setStreak(0);
+        return dailyRepository.save(daily);
     }
 }

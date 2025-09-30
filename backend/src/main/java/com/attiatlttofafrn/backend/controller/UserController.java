@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attiatlttofafrn.backend.model.Daily;
 import com.attiatlttofafrn.backend.model.Task;
 import com.attiatlttofafrn.backend.service.DailyService;
 import com.attiatlttofafrn.backend.service.TaskService;
@@ -133,6 +134,23 @@ public class UserController {
         }
     }
 
+    @PostMapping("dailies")
+    public ResponseEntity<?> addDaily(Authentication auth, @RequestBody DailyRequest request) {
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .map(user -> {
+                    Daily daily = dailyService.createDaily(user, request.title());
+                    DailyResponse response = new DailyResponse(
+                            daily.getDaily_id(),
+                            daily.getTitle(),
+                            daily.getCompleted(),
+                            daily.getCreatedAt(),
+                            daily.getStreak());
+                    return ResponseEntity.ok(response);
+                }).orElse(ResponseEntity.notFound().build());
+    }
+
     private record UserResponse(String username, String email) {
 
     }
@@ -158,6 +176,10 @@ public class UserController {
             LocalDateTime createdAt,
             Integer streak
             ) {
+
+    }
+
+    private record DailyRequest(String title) {
 
     }
 }
