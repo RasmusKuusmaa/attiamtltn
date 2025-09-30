@@ -51,6 +51,8 @@ function Main(): JSX.Element {
     setTasks(updatedTasks);
   };
   const handleDelete = async (id: number) => {
+    const confirmed = window.confirm("Are you sure you want to delete this task");
+    if (!confirmed) return;
     await DeleteTask(token, id);
     await RefreshTasks();
   };
