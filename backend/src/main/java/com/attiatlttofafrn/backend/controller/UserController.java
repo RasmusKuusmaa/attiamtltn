@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.attiatlttofafrn.backend.model.Task;
+import com.attiatlttofafrn.backend.service.DailyService;
 import com.attiatlttofafrn.backend.service.TaskService;
 import com.attiatlttofafrn.backend.service.UserService;
 
@@ -23,10 +24,12 @@ public class UserController {
 
     private final UserService userService;
     private final TaskService taskService;
+    private final DailyService dailyService;
 
-    public UserController(UserService userService, TaskService taskService) {
+    public UserController(UserService userService, TaskService taskService, DailyService dailyService) {
         this.userService = userService;
         this.taskService = taskService;
+        this.dailyService = dailyService;
     }
 
     @GetMapping("/me")
@@ -103,6 +106,24 @@ public class UserController {
                 .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
     }
 
+    @GetMapping("dailies")
+    public ResponseEntity<?> getUserDailies(Authentication auth) {
+        String email = auth.getName();
+        return userService.findByEmail(email)
+                .map(user -> ResponseEntity.ok(
+                dailyService.getDailiesForUser(user)
+                        .stream()
+                        .map(daily -> new DailyResponse(
+                        daily.getDaily_id(),
+                        daily.getTitle(),
+                        daily.getCompleted(),
+                        daily.getCreatedAt(),
+                        daily.getStreak())).
+                        toList()))
+                .orElse(ResponseEntity.notFound().build()
+                );
+    }
+
     private record UserResponse(String username, String email) {
 
     }
@@ -121,4 +142,13 @@ public class UserController {
 
     }
 
+    private record DailyResponse(
+            Long daily_id,
+            String title,
+            Boolean completed,
+            LocalDateTime createdAt,
+            Integer streak
+            ) {
+
+    }
 }
