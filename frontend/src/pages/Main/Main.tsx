@@ -4,13 +4,13 @@ import { useNavigate } from "react-router-dom";
 import {
   AddNewTask,
   DeleteTask,
-  getCurrentUser,
   getUserTasks,
   ToggleTaskCompletion,
-} from "../../services/userService";
+} from "../../services/taskService";
 import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
 import "./Main.css";
+import { getCurrentUser } from "../../services/userService";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
