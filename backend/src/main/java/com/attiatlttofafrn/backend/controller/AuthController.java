@@ -39,6 +39,11 @@ public class AuthController {
             return ResponseEntity.badRequest().body("Error: Email is already in use!");
         }
 
+        if (registerRequest.getUsername() == null || registerRequest.getUsername().isEmpty()
+                || registerRequest.getEmail() == null || registerRequest.getEmail().isEmpty()
+                || registerRequest.getPassword() == null || registerRequest.getPassword().isEmpty()) {
+            return ResponseEntity.badRequest().body("Incomplete data!");
+        }
         User user = new User();
         user.setUsername(registerRequest.getUsername());
         user.setEmail(registerRequest.getEmail());

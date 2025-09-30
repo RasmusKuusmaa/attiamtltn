@@ -10,15 +10,16 @@ function Signup() : JSX.Element {
     const navigate = useNavigate();
 
     const handleRegister = async (e: React.FormEvent) => {
+        e.preventDefault();
         if (username == "" || email == "" || password == "") {
             alert("all fields need to be filled");
+            return;
         }
         if (password != repeatPassword){
             alert("password mismatch");
             return;
         }
 
-        e.preventDefault();
         try {
             const successmessage = await authService.register({
                 username,
