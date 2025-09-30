@@ -6,6 +6,7 @@ import {
   DeleteTask,
   getCurrentUser,
   getUserTasks,
+  ToggleTaskCompletion,
 } from "../../services/userService";
 import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
@@ -51,13 +52,16 @@ function Main(): JSX.Element {
     setTasks(updatedTasks);
   };
   const handleDelete = async (id: number) => {
-    const confirmed = window.confirm("Are you sure you want to delete this task");
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this task"
+    );
     if (!confirmed) return;
     await DeleteTask(token, id);
     await RefreshTasks();
   };
-  const handleToggle = (id: number) => {
-    console.log(`completed task ${id}`);
+  const handleToggle = async (id: number) => {
+    await ToggleTaskCompletion(token, id);
+    await RefreshTasks();
   };
 
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
@@ -85,7 +89,7 @@ function Main(): JSX.Element {
               <input
                 type="checkbox"
                 checked={task.completed}
-                onChange={() => handleToggle(index)}
+                onChange={() => handleToggle(task.task_id)}
               />
               <p>{task.title}</p>
             </div>

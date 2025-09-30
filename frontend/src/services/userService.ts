@@ -1,3 +1,4 @@
+import { error } from "console";
 import { METHODS } from "http";
 
 const API_URL = "http://localhost:8080/api/user";
@@ -51,10 +52,21 @@ export async function DeleteTask(token: string, id: number) {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
-      "Content-Type": "application/json",
     },
   });
   if (!response.ok) {
     throw new Error("Failed to delete task");
+  }
+}
+
+export async function ToggleTaskCompletion(token: string, id: number) {
+  const response = await fetch(`${API_URL}/tasks/${id}/complete`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to edit task completion status");
   }
 }
