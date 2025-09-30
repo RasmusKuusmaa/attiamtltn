@@ -1,4 +1,4 @@
-package com.attiatlttofafrn.backend.dto;
+package com.attiatlttofafrn.backend.dto.user.prelogin;
 
 public class LoginRequest {
 

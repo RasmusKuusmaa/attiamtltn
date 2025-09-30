@@ -1,8 +1,8 @@
 package com.attiatlttofafrn.backend.controller;
 
-import com.attiatlttofafrn.backend.dto.LoginRequest;
-import com.attiatlttofafrn.backend.dto.LoginResponse;
-import com.attiatlttofafrn.backend.dto.RegisterRequest;
+import com.attiatlttofafrn.backend.dto.user.prelogin.LoginRequest;
+import com.attiatlttofafrn.backend.dto.user.prelogin.LoginResponse;
+import com.attiatlttofafrn.backend.dto.user.prelogin.RegisterRequest;
 import com.attiatlttofafrn.backend.model.User;
 import com.attiatlttofafrn.backend.service.JwtService;
 import com.attiatlttofafrn.backend.service.UserService;
