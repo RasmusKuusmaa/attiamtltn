@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attiatlttofafrn.backend.dto.user.UserResponse;
 import com.attiatlttofafrn.backend.service.UserService;
 
 @RestController
@@ -25,9 +26,5 @@ public class UserController {
         return userService.findByEmail(email)
                 .map(user -> ResponseEntity.ok(new UserResponse(user.getUsername(), user.getEmail())))
                 .orElse(ResponseEntity.notFound().build());
-    }
-
-    private record UserResponse(String username, String email) {
-
     }
 }
