@@ -11,11 +11,11 @@ function Signup() : JSX.Element {
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (username == "" || email == "" || password == "") {
+        if (username === "" || email === "" || password === "") {
             alert("all fields need to be filled");
             return;
         }
-        if (password != repeatPassword){
+        if (password !== repeatPassword){
             alert("password mismatch");
             return;
         }
