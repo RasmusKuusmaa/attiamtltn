@@ -3,6 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import {
   AddNewTask,
+  DeleteTask,
   getCurrentUser,
   getUserTasks,
 } from "../../services/userService";
@@ -17,7 +18,7 @@ function Main(): JSX.Element {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   const { setContent } = useContext(TopBarContext);
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const token = localStorage.getItem("token") || "";
   useEffect(() => {
     if (!token) return;
 
@@ -45,21 +46,24 @@ function Main(): JSX.Element {
     navigate("/login");
   }
 
-  const handleDelete = (index: number) => {
-    console.log(`Delete task ${index}`);
+  const RefreshTasks = async () => {
+    const updatedTasks = await getUserTasks(token);
+    setTasks(updatedTasks);
   };
-  const handleToggle = (index: number) => {
-    console.log(`completed task ${index}`);
+  const handleDelete = async (id: number) => {
+    await DeleteTask(token, id);
+    await RefreshTasks();
+  };
+  const handleToggle = (id: number) => {
+    console.log(`completed task ${id}`);
   };
 
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+
   const handleAddTask = async () => {
     await AddNewTask(token, newTaskTitle);
-
-    const updatedTasks = await getUserTasks(token);
-    setTasks(updatedTasks);
-
+    await RefreshTasks();
     setNewTaskTitle("");
     setIsNewTaskModalOpen(false);
   };
@@ -85,7 +89,7 @@ function Main(): JSX.Element {
             </div>
             <button
               className="task-delete-button"
-              onClick={() => handleDelete(index)}
+              onClick={() => handleDelete(task.task_id)}
             >
               Delete
             </button>
