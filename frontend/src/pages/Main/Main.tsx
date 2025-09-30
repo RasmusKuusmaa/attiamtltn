@@ -11,7 +11,12 @@ import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
 import "./Main.css";
 import { getCurrentUser } from "../../services/userService";
-import { DeleteDaily, getUserDailies, TogggleDailyCompletion } from "../../services/dailyService";
+import {
+  AddnewDaily,
+  DeleteDaily,
+  getUserDailies,
+  TogggleDailyCompletion,
+} from "../../services/dailyService";
 import { Daily } from "../../types/Daily";
 import { assert } from "console";
 import { NumericLiteral } from "typescript";
@@ -88,7 +93,7 @@ function Main(): JSX.Element {
     setNewTaskTitle("");
     setIsNewTaskModalOpen(false);
   };
-  
+
   const handleDailyDelete = async (id: number) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this daily"
@@ -100,8 +105,17 @@ function Main(): JSX.Element {
   };
   const handleDailyToggle = async (id: number) => {
     await TogggleDailyCompletion(token, id);
-    await refreshdailies(); 
-  }
+    await refreshdailies();
+  };
+  const handleAddDaily = async () => {
+    await AddnewDaily(token, newDailyTitle);
+    await refreshdailies();
+    setNewDailyTitle("");
+    setIsNewDailyModalOpen(false);
+  };
+
+  const [isnewDailyModalOpen, setIsNewDailyModalOpen] = useState(false);
+  const [newDailyTitle, setNewDailyTitle] = useState("");
   return (
     <div className="mainpage-wrapper">
       <div>
@@ -135,14 +149,22 @@ function Main(): JSX.Element {
       </div>
 
       <div>
-        <button className="new-task-button">Add a daily</button>
+        <button
+          className="new-task-button"
+          onClick={() => setIsNewDailyModalOpen(true)}
+        >
+          Add a daily
+        </button>
 
         <div className="task-container">
           {dailies.map((daily, index) => (
             <div key={index} className="task-item">
               <div className="task-left">
-                <input type="checkbox" checked={daily.completed} 
-                onChange={() => handleDailyToggle(daily.daily_id)}/>
+                <input
+                  type="checkbox"
+                  checked={daily.completed}
+                  onChange={() => handleDailyToggle(daily.daily_id)}
+                />
                 <p>{daily.title}</p>
                 <p>Streak: {daily.streak}</p>
               </div>
@@ -158,6 +180,7 @@ function Main(): JSX.Element {
       </div>
       {/* Modals */}
 
+      {/* New task modal */}
       {isNewTaskModalOpen && (
         <div className="task-new-modal-overlay">
           <div className="task-new-modal">
@@ -171,6 +194,27 @@ function Main(): JSX.Element {
             <div className="task-new-modal-buttons">
               <button onClick={handleAddTask}>Add</button>
               <button onClick={() => setIsNewTaskModalOpen(false)}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/*New Daily modal */}
+      {isnewDailyModalOpen && (
+        <div className="task-new-modal-overlay">
+          <div className="task-new-modal">
+            <h3>Add new daily</h3>
+            <input
+              type="text"
+              value={newDailyTitle}
+              onChange={(e) => setNewDailyTitle(e.target.value)}
+              placeholder="Daily title"
+            />
+            <div className="task-new-modal-buttons">
+              <button onClick={handleAddDaily}>Add</button>
+              <button onClick={() => setIsNewDailyModalOpen(false)}>
                 Cancel
               </button>
             </div>
