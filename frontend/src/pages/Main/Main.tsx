@@ -11,7 +11,7 @@ import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
 import "./Main.css";
 import { getCurrentUser } from "../../services/userService";
-import { DeleteDaily, getUserDailies } from "../../services/dailyService";
+import { DeleteDaily, getUserDailies, TogggleDailyCompletion } from "../../services/dailyService";
 import { Daily } from "../../types/Daily";
 import { assert } from "console";
 import { NumericLiteral } from "typescript";
@@ -79,16 +79,6 @@ function Main(): JSX.Element {
     await ToggleTaskCompletion(token, id);
     await refreshTasks();
   };
-
-  const handleDailyDelete = async (id: number) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this daily"
-    );
-    if (!confirmed) return;
-
-    await DeleteDaily(token, id);
-    await refreshdailies();
-  };
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
@@ -98,6 +88,20 @@ function Main(): JSX.Element {
     setNewTaskTitle("");
     setIsNewTaskModalOpen(false);
   };
+  
+  const handleDailyDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this daily"
+    );
+    if (!confirmed) return;
+
+    await DeleteDaily(token, id);
+    await refreshdailies();
+  };
+  const handleDailyToggle = async (id: number) => {
+    await TogggleDailyCompletion(token, id);
+    await refreshdailies(); 
+  }
   return (
     <div className="mainpage-wrapper">
       <div>
@@ -137,7 +141,8 @@ function Main(): JSX.Element {
           {dailies.map((daily, index) => (
             <div key={index} className="task-item">
               <div className="task-left">
-                <input type="checkbox" checked={daily.completed} />
+                <input type="checkbox" checked={daily.completed} 
+                onChange={() => handleDailyToggle(daily.daily_id)}/>
                 <p>{daily.title}</p>
                 <p>Streak: {daily.streak}</p>
               </div>

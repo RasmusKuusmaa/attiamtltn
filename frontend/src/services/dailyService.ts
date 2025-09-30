@@ -24,3 +24,15 @@ export async function DeleteDaily(token: string, id: number){
         throw new Error("Failed to delete daily");
     }
 }
+
+export async function TogggleDailyCompletion(token: string, id:number){
+    const response = await fetch(`${API_URL}/${id}/complete`, {
+        method: "POST",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    if (!response.ok){
+        throw new Error("Failed to complete daily");
+    }
+}
