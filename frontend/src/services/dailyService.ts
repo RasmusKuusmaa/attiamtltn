@@ -11,5 +11,16 @@ export async function getUserDailies(token: string){
         throw new Error("Failed to fetch user Dailies");
     }
     return response.json();
+}
 
+export async function DeleteDaily(token: string, id: number){
+    const response = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+    });
+    if (!response.ok){
+        throw new Error("Failed to delete daily");
+    }
 }

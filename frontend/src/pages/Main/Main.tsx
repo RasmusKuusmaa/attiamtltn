@@ -11,8 +11,10 @@ import { Task } from "../../types/Task";
 import { TopBarContext } from "../../context/TopBarcontext";
 import "./Main.css";
 import { getCurrentUser } from "../../services/userService";
-import { getUserDailies } from "../../services/dailyService";
+import { DeleteDaily, getUserDailies } from "../../services/dailyService";
 import { Daily } from "../../types/Daily";
+import { assert } from "console";
+import { NumericLiteral } from "typescript";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
@@ -57,29 +59,42 @@ function Main(): JSX.Element {
     navigate("/login");
   }
 
-  const RefreshTasks = async () => {
+  const refreshTasks = async () => {
     const updatedTasks = await getUserTasks(token);
     setTasks(updatedTasks);
   };
-  const handleDelete = async (id: number) => {
+  const refreshdailies = async () => {
+    const updatedDailies = await getUserDailies(token);
+    setDailies(updatedDailies);
+  };
+  const handleTaskDelete = async (id: number) => {
     const confirmed = window.confirm(
       "Are you sure you want to delete this task"
     );
     if (!confirmed) return;
     await DeleteTask(token, id);
-    await RefreshTasks();
+    await refreshTasks();
   };
-  const handleToggle = async (id: number) => {
+  const handleTaskToggle = async (id: number) => {
     await ToggleTaskCompletion(token, id);
-    await RefreshTasks();
+    await refreshTasks();
   };
 
+  const handleDailyDelete = async (id: number) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this daily"
+    );
+    if (!confirmed) return;
+
+    await DeleteDaily(token, id);
+    await refreshdailies();
+  };
   const [isNewTaskModalOpen, setIsNewTaskModalOpen] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
 
   const handleAddTask = async () => {
     await AddNewTask(token, newTaskTitle);
-    await RefreshTasks();
+    await refreshTasks();
     setNewTaskTitle("");
     setIsNewTaskModalOpen(false);
   };
@@ -100,13 +115,13 @@ function Main(): JSX.Element {
                 <input
                   type="checkbox"
                   checked={task.completed}
-                  onChange={() => handleToggle(task.task_id)}
+                  onChange={() => handleTaskToggle(task.task_id)}
                 />
                 <p>{task.title}</p>
               </div>
               <button
                 className="task-delete-button"
-                onClick={() => handleDelete(task.task_id)}
+                onClick={() => handleTaskDelete(task.task_id)}
               >
                 Delete
               </button>
@@ -126,7 +141,12 @@ function Main(): JSX.Element {
                 <p>{daily.title}</p>
                 <p>Streak: {daily.streak}</p>
               </div>
-              <button className="task-delete-button">Delete</button>
+              <button
+                className="task-delete-button"
+                onClick={() => handleDailyDelete(daily.daily_id)}
+              >
+                Delete
+              </button>
             </div>
           ))}
         </div>
