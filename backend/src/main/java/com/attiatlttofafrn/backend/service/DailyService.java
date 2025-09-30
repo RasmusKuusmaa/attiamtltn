@@ -21,4 +21,13 @@ public class DailyService {
         return dailyRepository.findByUser(user);
     }
 
+    public boolean deleteDaily(Long id) {
+        return dailyRepository.findById(id).map(
+                daily -> {
+                    dailyRepository.delete(daily);
+                    return true;
+
+                }).orElse(false);
+
+    }
 }

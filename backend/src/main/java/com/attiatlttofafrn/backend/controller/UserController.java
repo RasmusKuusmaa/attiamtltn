@@ -124,6 +124,15 @@ public class UserController {
                 );
     }
 
+    @DeleteMapping("/dailies/{dailyId}")
+    public ResponseEntity<?> deleteDaily(@PathVariable Long dailyId) {
+        if (dailyService.deleteDaily(dailyId)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     private record UserResponse(String username, String email) {
 
     }
