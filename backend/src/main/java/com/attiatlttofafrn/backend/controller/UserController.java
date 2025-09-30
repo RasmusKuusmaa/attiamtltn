@@ -151,6 +151,26 @@ public class UserController {
                 }).orElse(ResponseEntity.notFound().build());
     }
 
+    @PostMapping("/dailies/{dailyId}/complete")
+    public ResponseEntity<?> completeDaily(Authentication auth, @PathVariable Long dailyId) {
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .map(user -> {
+                    try {
+                        boolean updated = dailyService.toggleDailyCompletion(dailyId, user);
+                        if (updated) {
+                            return ResponseEntity.ok().build();
+                        } else {
+                            return ResponseEntity.notFound().build();
+                        }
+                    } catch (SecurityException e) {
+                        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+                    }
+                })
+                .orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
+    }
+
     private record UserResponse(String username, String email) {
 
     }

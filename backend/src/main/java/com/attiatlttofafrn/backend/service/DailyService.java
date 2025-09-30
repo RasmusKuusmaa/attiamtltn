@@ -40,4 +40,22 @@ public class DailyService {
         daily.setStreak(0);
         return dailyRepository.save(daily);
     }
+
+    public boolean toggleDailyCompletion(Long dailyId, User user) {
+        return dailyRepository.findById(dailyId)
+                .map(daily -> {
+                    if (!daily.getUser().getUser_id().equals(user.getUser_id())) {
+                        throw new SecurityException("You cannot modify this daily");
+                    }
+                    if (!daily.getCompleted()) {
+                        daily.setCompleted(true);
+
+                    } else {
+                        daily.setCompleted(false);
+                    }
+                    dailyRepository.save(daily);
+                    return true;
+                })
+                .orElse(false);
+    }
 }
