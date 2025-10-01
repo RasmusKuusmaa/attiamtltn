@@ -20,6 +20,9 @@ import {
 import { Daily } from "../../types/Daily";
 import { assert } from "console";
 import { NumericLiteral } from "typescript";
+import { Folder } from "../../types";
+import { getUserFolders } from "../../services/folderService";
+import { getValue } from "@testing-library/user-event/dist/utils";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
@@ -27,8 +30,12 @@ function Main(): JSX.Element {
   const [username, setUsername] = useState("");
   const [tasks, setTasks] = useState<Task[]>([]);
   const [dailies, setDailies] = useState<Daily[]>([]);
+  const [TaskFolders, setTaskFolders] = useState<Folder[]>([]);
+  const [selecedTaskFolder, setSelectedTaskFolder] = useState<Number>(0);
+
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
+
 
   useEffect(() => {
     if (!token) return;
@@ -47,6 +54,10 @@ function Main(): JSX.Element {
     getUserDailies(token)
       .then((data) => setDailies(data))
       .catch((err) => console.error(err));
+    //get user folders
+    getUserFolders(token)
+    .then((data) => setTaskFolders(data))
+    .catch((err) => console.error(err));
   }, []);
 
   //load topbar content
@@ -57,6 +68,7 @@ function Main(): JSX.Element {
         <button onClick={handleLogout}>Logout</button>
       </div>
     );
+    
   }, [username, setContent]);
 
   function handleLogout() {
@@ -116,9 +128,24 @@ function Main(): JSX.Element {
 
   const [isnewDailyModalOpen, setIsNewDailyModalOpen] = useState(false);
   const [newDailyTitle, setNewDailyTitle] = useState("");
+  
+  const handleFolderChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const folderType = Number(e.target.value);
+    setSelectedTaskFolder(folderType);
+    console.log(selecedTaskFolder);
+  }
   return (
     <div className="mainpage-wrapper">
+      {/* Tasks */}
       <div>
+        <select  onChange={handleFolderChange}>
+          <option  value={0}>Select a folder</option>
+          {TaskFolders.map((folder) => (
+            <option key={folder.folder_id} value={folder.folder_id}>
+              {folder.title}
+            </option>
+          ))}
+        </select>
         <button
           className="new-task-button"
           onClick={() => setIsNewTaskModalOpen(true)}
@@ -148,14 +175,16 @@ function Main(): JSX.Element {
         </div>
       </div>
 
+      {/* Dailies */}
       <div>
+        
         <button
           className="new-task-button"
           onClick={() => setIsNewDailyModalOpen(true)}
         >
           Add a daily
         </button>
-
+          
         <div className="task-container">
           {dailies.map((daily, index) => (
             <div key={index} className="task-item">
