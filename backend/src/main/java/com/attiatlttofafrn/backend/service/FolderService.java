@@ -20,4 +20,12 @@ public class FolderService {
     public List<Folder> getFoldersForUser(User user) {
         return folderRepository.findByUser(user);
     }
+
+    public Folder createFolder(User user, String title, Integer folderType) {
+        Folder folder = new Folder();
+        folder.setUser(user);
+        folder.setTitle(title);
+        folder.setFolderType(folderType);
+        return folderRepository.save(folder);
+    }
 }
