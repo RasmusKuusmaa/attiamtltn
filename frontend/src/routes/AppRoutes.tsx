@@ -27,7 +27,7 @@ function AppRoutes(): JSX.Element {
               path="/stats"
               element={isAuthenticated ? <Stats /> : <Navigate to="/login" />}
             />
-            <Route path="*" element={<Navigate to="/dashboard" />} />
+            <Route path="*" element={<Navigate to="/main" />} />
           </Route>
         ) : (
           <Route path="*" element={<Navigate to="/login" />} />
