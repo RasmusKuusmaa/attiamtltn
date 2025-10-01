@@ -71,9 +71,11 @@ function Main(): JSX.Element {
 
         <TaskList
           tasks={
-            selectedTaskFolder === 0
+            selectedTaskFolder === "all"
               ? tasks
-              : tasks.filter((t) => t.task_id === selectedTaskFolder)
+              : selectedTaskFolder === "unassigned"
+              ? tasks.filter((t) => !t.folder_id || t.folder_id === 0)
+              : tasks.filter((t) => t.folder_id === selectedTaskFolder)
           }
           onDelete={deleteTask}
           onToggle={toggleTask}
@@ -89,19 +91,19 @@ function Main(): JSX.Element {
           selectedFolder={selectedDailyFolder}
           onChange={setSelectedDailyFolder}
         />
-
         <DailyList
           dailies={
-            selectedDailyFolder === 0
+            selectedDailyFolder === "all"
               ? dailies
-              : dailies.filter((d) => d.daily_id === selectedDailyFolder)
+              : selectedDailyFolder === "unassigned"
+              ? dailies.filter((d) => !d.folder_id || d.folder_id === 0)
+              : dailies.filter((d) => d.folder_id === selectedDailyFolder)
           }
           onDelete={deleteDaily}
           onToggle={toggleDaily}
           onAdd={() => setDailyModalOpen(true)}
         />
       </div>
-
 
       {isTaskModalOpen && (
         <TaskModal onAdd={addTask} onClose={() => setTaskModalOpen(false)} />
