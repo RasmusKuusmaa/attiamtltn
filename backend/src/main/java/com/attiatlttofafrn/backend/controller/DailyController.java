@@ -1,5 +1,7 @@
 package com.attiatlttofafrn.backend.controller;
 
+import java.util.Optional;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.attiatlttofafrn.backend.dto.daily.DailyRequest;
 import com.attiatlttofafrn.backend.dto.daily.DailyResponse;
 import com.attiatlttofafrn.backend.model.Daily;
+import com.attiatlttofafrn.backend.model.Folder;
 import com.attiatlttofafrn.backend.service.DailyService;
 import com.attiatlttofafrn.backend.service.UserService;
 
@@ -39,6 +42,9 @@ public class DailyController {
                         .stream()
                         .map(daily -> new DailyResponse(
                         daily.getDaily_id(),
+                        Optional.ofNullable(daily.getFolder())
+                                .map(Folder::getFolder_id)
+                                .orElse(null),
                         daily.getTitle(),
                         daily.getCompleted(),
                         daily.getCreatedAt(),
@@ -66,6 +72,9 @@ public class DailyController {
                     Daily daily = dailyService.createDaily(user, request.title());
                     DailyResponse response = new DailyResponse(
                             daily.getDaily_id(),
+                            Optional.ofNullable(daily.getFolder())
+                                    .map(Folder::getFolder_id)
+                                    .orElse(null),
                             daily.getTitle(),
                             daily.getCompleted(),
                             daily.getCreatedAt(),

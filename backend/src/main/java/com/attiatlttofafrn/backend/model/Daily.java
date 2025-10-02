@@ -16,6 +16,10 @@ public class Daily {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "folder_id", nullable = true)
+    private Folder folder;
+
     @Column
     private String title;
 
@@ -42,6 +46,14 @@ public class Daily {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Folder getFolder() {
+        return folder;
+    }
+
+    public void setFolder(Folder folder) {
+        this.folder = folder;
     }
 
     public String getTitle() {
@@ -75,4 +87,5 @@ public class Daily {
     public void setStreak(Integer streak) {
         this.streak = streak;
     }
+
 }

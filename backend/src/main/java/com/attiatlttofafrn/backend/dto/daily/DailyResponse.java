@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public record DailyResponse(
         Long daily_id,
+        Long folder_id,
         String title,
         Boolean completed,
         LocalDateTime createdAt,

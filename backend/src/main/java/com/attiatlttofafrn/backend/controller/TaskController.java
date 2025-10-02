@@ -1,6 +1,7 @@
 package com.attiatlttofafrn.backend.controller;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.attiatlttofafrn.backend.dto.task.TaskRequest;
 import com.attiatlttofafrn.backend.dto.task.TaskResponse;
+import com.attiatlttofafrn.backend.model.Folder;
 import com.attiatlttofafrn.backend.model.Task;
 import com.attiatlttofafrn.backend.service.TaskService;
 import com.attiatlttofafrn.backend.service.UserService;
@@ -42,6 +44,9 @@ public class TaskController {
                         .stream()
                         .map(task -> new TaskResponse(
                         task.getTask_id(),
+                        Optional.ofNullable(task.getFolder())
+                                .map(Folder::getFolder_id)
+                                .orElse(null),
                         task.getTitle(),
                         task.getCompleted(),
                         task.getCreatedAt(),
@@ -66,8 +71,12 @@ public class TaskController {
         return userService.findByEmail(email)
                 .map(user -> {
                     Task task = taskService.createTask(user, request.title());
+                    Long folderId = Optional.ofNullable(task.getFolder())
+                            .map(Folder::getFolder_id)
+                            .orElse(null);
                     TaskResponse response = new TaskResponse(
                             task.getTask_id(),
+                            folderId,
                             task.getTitle(),
                             task.getCompleted(),
                             task.getCreatedAt(),
