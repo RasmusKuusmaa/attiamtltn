@@ -5,17 +5,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.attiatlttofafrn.backend.dto.Folder.FolderResponse;
+import com.attiatlttofafrn.backend.dto.task.TaskRequest;
+import com.attiatlttofafrn.backend.dto.task.TaskUpdateRequest;
+import com.attiatlttofafrn.backend.model.Folder;
 import com.attiatlttofafrn.backend.model.Task;
 import com.attiatlttofafrn.backend.model.User;
+import com.attiatlttofafrn.backend.repository.FolderRepository;
 import com.attiatlttofafrn.backend.repository.TaskRepository;
 
 @Service
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final FolderRepository folderRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(TaskRepository taskRepository, FolderRepository folderRepository) {
         this.taskRepository = taskRepository;
+        this.folderRepository = folderRepository;
     }
 
     public List<Task> getTasksForUser(User user) {
@@ -59,4 +66,28 @@ public class TaskService {
                 .orElse(false);
     }
 
+    public Boolean updateTask(Long taskId, TaskUpdateRequest request) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new RuntimeException("Task not found"));
+        boolean changed = false;
+        if (request.folderid() == null) {
+            if (task.getFolder() != null) {
+                task.setFolder(null);
+                changed = true;
+            }
+        } else {
+            Folder folder = folderRepository.findById(request.folderid())
+                    .orElseThrow(() -> new RuntimeException("Folder not found"));
+            if (!folder.equals(task.getFolder())) {
+                task.setFolder(folder);
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            taskRepository.save(task);
+        }
+
+        return changed;
+    }
 }
