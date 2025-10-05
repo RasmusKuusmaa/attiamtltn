@@ -6,9 +6,10 @@ type Props = {
   folders: Folder[];
   selectedFolder: number | "all" | "unassigned";
   onChange: (folderId: number | "all" | "unassigned") => void;
+  onAdd: () => void;
 };
 
-function FolderSelect({ label, folders, selectedFolder, onChange }: Props) {
+function FolderSelect({ label, folders, selectedFolder, onChange, onAdd }: Props) {
   return (
     <div className="folder-select-wrapper">
       <label>{label}</label>
@@ -32,6 +33,9 @@ function FolderSelect({ label, folders, selectedFolder, onChange }: Props) {
           </option>
         ))}
       </select>
+      <button onClick={onAdd}>
+      +
+      </button>
     </div>
   );
 }

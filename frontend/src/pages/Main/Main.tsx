@@ -15,6 +15,9 @@ import DailyList from "../../components/DailyList/DailyList";
 import TaskModal from "../../components/TaskModal/TaskModal";
 import DailyModal from "../../components/DailyModal/DailyModal";
 import EditTaskModal from "../../components/EditTaskModal/EditTaskModal";
+import NewFolderModal from "../../components/NewFolderModal/NewFolderModal";
+import { features, title } from "process";
+import { addNewFolder } from "../../services/folderService";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
@@ -22,7 +25,8 @@ function Main(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
 
-  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder  } = useTasks(token);
+  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder } =
+    useTasks(token);
   const { dailies, addDaily, deleteDaily, toggleDaily } = useDailies(token);
 
   const [username, setUsername] = useState("");
@@ -30,6 +34,9 @@ function Main(): JSX.Element {
   const [isDailyModalOpen, setDailyModalOpen] = useState(false);
   const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
   const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
+  const [isNewFolderModalOpen, setIsNewFolderModalOpen] = useState(false);
+  const [newFolderType, setNewFolderType] = useState(0);
+
   useEffect(() => {
     if (!token) return;
     getCurrentUser(token)
@@ -50,7 +57,7 @@ function Main(): JSX.Element {
     logout();
     navigate("/login");
   }
-  async function handleTaskEdit (id: number){
+  async function handleTaskEdit(id: number) {
     setEditingTaskId(id);
     setIsEditTaskModalOpen(true);
   }
@@ -64,6 +71,10 @@ function Main(): JSX.Element {
     setSelectedDailyFolder,
   } = useFolders(token);
 
+  async function handleNewFolder(title: string, folderType: number) {
+    await addNewFolder(token, title, folderType);
+    setIsNewFolderModalOpen(false);
+  }
   return (
     <div className="mainpage-wrapper">
       {/* Task Section */}
@@ -73,6 +84,10 @@ function Main(): JSX.Element {
           folders={taskFolders}
           selectedFolder={selectedTaskFolder}
           onChange={setSelectedTaskFolder}
+          onAdd={() => {
+            setNewFolderType(0);
+            setIsNewFolderModalOpen(true);
+          }}
         />
 
         <TaskList
@@ -97,6 +112,10 @@ function Main(): JSX.Element {
           folders={dailyFolders}
           selectedFolder={selectedDailyFolder}
           onChange={setSelectedDailyFolder}
+          onAdd={() => {
+            setIsNewFolderModalOpen(true);
+            setNewFolderType(1);
+          }}
         />
         <DailyList
           dailies={
@@ -122,17 +141,25 @@ function Main(): JSX.Element {
 
       {isEditTaskModalOpen && editingTaskId !== null && (
         <EditTaskModal
-        taskId={editingTaskId}
-        currentFolderId={tasks.find(t => t.task_id === editingTaskId)?.folder_id ?? null}
-        folders={taskFolders}
-        onSave={async (id, folderId) => {
-          await changeTaskFolder(id, folderId);
-          setIsEditTaskModalOpen(false);
-        }}
-        onClose={() => setIsEditTaskModalOpen(false)}
-      />
+          taskId={editingTaskId}
+          currentFolderId={
+            tasks.find((t) => t.task_id === editingTaskId)?.folder_id ?? null
+          }
+          folders={taskFolders}
+          onSave={async (id, folderId) => {
+            await changeTaskFolder(id, folderId);
+            setIsEditTaskModalOpen(false);
+          }}
+          onClose={() => setIsEditTaskModalOpen(false)}
+        />
       )}
-      
+
+      {isNewFolderModalOpen && (
+        <NewFolderModal
+          onAdd={(title) => handleNewFolder(title, newFolderType)}
+          onClose={() => setIsNewFolderModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
