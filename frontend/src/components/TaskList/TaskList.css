@@ -6,6 +6,7 @@
   overflow-y: auto;
   padding: 10px;
   background: #fff;
+  
 }
 
 .task-item {
@@ -19,7 +20,8 @@
 .task-left {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
+  max-width: 8rem;
 }
 
 .task-delete-button {

@@ -6,9 +6,10 @@ type Props = {
   onDelete: (id: number) => void;
   onToggle: (id: number) => void;
   onAdd: () => void;
+  onEdit: (id: number) => void;
 };
 
-function TaskList({ tasks, onDelete, onToggle, onAdd }: Props) {
+function TaskList({ tasks, onDelete, onToggle, onAdd, onEdit }: Props) {
   return (
     <div>
       <button className="new-task-button" onClick={onAdd}>
@@ -24,8 +25,13 @@ function TaskList({ tasks, onDelete, onToggle, onAdd }: Props) {
                 checked={task.completed}
                 onChange={() => onToggle(task.task_id)}
               />
+              
               <p>{task.title}</p>
+              
             </div>
+            <button onClick={() => onEdit(task.task_id)}>
+              edit
+            </button>
             <button
               className="task-delete-button"
               onClick={() => onDelete(task.task_id)}

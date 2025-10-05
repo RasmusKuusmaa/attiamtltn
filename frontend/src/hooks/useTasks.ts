@@ -5,6 +5,7 @@ import {
   AddNewTask,
   DeleteTask,
   ToggleTaskCompletion,
+  UpdateTaskFolder,
 } from "../services/taskService";
 
 export default function useTasks(token: string) {
@@ -35,5 +36,9 @@ export default function useTasks(token: string) {
     await refresh();
   };
 
-  return { tasks, addTask, deleteTask, toggleTask };
+const changeTaskFolder = async (id: number, folderId: number | null) => {
+    const updated = await UpdateTaskFolder(token, id, folderId);
+    if (updated) await refresh();
+  };
+  return { tasks, addTask, deleteTask, toggleTask, changeTaskFolder};
 }

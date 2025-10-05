@@ -14,6 +14,7 @@ import TaskList from "../../components/TaskList/TaskList";
 import DailyList from "../../components/DailyList/DailyList";
 import TaskModal from "../../components/TaskModal/TaskModal";
 import DailyModal from "../../components/DailyModal/DailyModal";
+import EditTaskModal from "../../components/EditTaskModal/EditTaskModal";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
@@ -21,13 +22,14 @@ function Main(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
 
-  const { tasks, addTask, deleteTask, toggleTask } = useTasks(token);
+  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder  } = useTasks(token);
   const { dailies, addDaily, deleteDaily, toggleDaily } = useDailies(token);
 
   const [username, setUsername] = useState("");
   const [isTaskModalOpen, setTaskModalOpen] = useState(false);
   const [isDailyModalOpen, setDailyModalOpen] = useState(false);
-
+  const [isEditTaskModalOpen, setIsEditTaskModalOpen] = useState(false);
+  const [editingTaskId, setEditingTaskId] = useState<number | null>(null);
   useEffect(() => {
     if (!token) return;
     getCurrentUser(token)
@@ -47,6 +49,10 @@ function Main(): JSX.Element {
   function handleLogout() {
     logout();
     navigate("/login");
+  }
+  async function handleTaskEdit (id: number){
+    setEditingTaskId(id);
+    setIsEditTaskModalOpen(true);
   }
 
   const {
@@ -80,6 +86,7 @@ function Main(): JSX.Element {
           onDelete={deleteTask}
           onToggle={toggleTask}
           onAdd={() => setTaskModalOpen(true)}
+          onEdit={handleTaskEdit}
         />
       </div>
 
@@ -112,6 +119,20 @@ function Main(): JSX.Element {
       {isDailyModalOpen && (
         <DailyModal onAdd={addDaily} onClose={() => setDailyModalOpen(false)} />
       )}
+
+      {isEditTaskModalOpen && editingTaskId !== null && (
+        <EditTaskModal
+        taskId={editingTaskId}
+        currentFolderId={tasks.find(t => t.task_id === editingTaskId)?.folder_id ?? null}
+        folders={taskFolders}
+        onSave={async (id, folderId) => {
+          await changeTaskFolder(id, folderId);
+          setIsEditTaskModalOpen(false);
+        }}
+        onClose={() => setIsEditTaskModalOpen(false)}
+      />
+      )}
+      
     </div>
   );
 }
