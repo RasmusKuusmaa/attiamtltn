@@ -20,6 +20,7 @@ import com.attiatlttofafrn.backend.dto.task.TaskResponse;
 import com.attiatlttofafrn.backend.dto.task.TaskUpdateRequest;
 import com.attiatlttofafrn.backend.model.Folder;
 import com.attiatlttofafrn.backend.model.Task;
+import com.attiatlttofafrn.backend.service.FolderService;
 import com.attiatlttofafrn.backend.service.TaskService;
 import com.attiatlttofafrn.backend.service.UserService;
 
@@ -30,10 +31,12 @@ public class TaskController {
     private final UserService userService;
 
     private final TaskService taskService;
+    private final FolderService folderService;
 
-    public TaskController(UserService userService, TaskService taskService) {
+    public TaskController(UserService userService, TaskService taskService, FolderService folderService) {
         this.userService = userService;
         this.taskService = taskService;
+        this.folderService = folderService;
     }
 
     @GetMapping("")
@@ -72,7 +75,12 @@ public class TaskController {
 
         return userService.findByEmail(email)
                 .map(user -> {
-                    Task task = taskService.createTask(user, request.title());
+                    Folder folder = null;
+                    if (request.folderId() != null) {
+                        folder = folderService.findById(request.folderId())
+                                .orElse(null);
+                    }
+                    Task task = taskService.createTask(user, request.title(), folder);
                     Long folderId = Optional.ofNullable(task.getFolder())
                             .map(Folder::getFolder_id)
                             .orElse(null);

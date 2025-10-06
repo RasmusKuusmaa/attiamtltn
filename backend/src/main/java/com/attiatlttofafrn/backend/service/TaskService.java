@@ -36,10 +36,11 @@ public class TaskService {
         }).orElse(false);
     }
 
-    public Task createTask(User user, String title) {
+    public Task createTask(User user, String title, Folder folder) {
         Task task = new Task();
         task.setUser(user);
         task.setTitle(title);
+        task.setFolder(folder);
         task.setCompleted(false);
         task.setCreatedAt(LocalDateTime.now());
         return taskRepository.save(task);

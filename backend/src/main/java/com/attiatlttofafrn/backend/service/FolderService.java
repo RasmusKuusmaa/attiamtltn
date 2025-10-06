@@ -1,6 +1,7 @@
 package com.attiatlttofafrn.backend.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -27,5 +28,9 @@ public class FolderService {
         folder.setTitle(title);
         folder.setFolderType(folderType);
         return folderRepository.save(folder);
+    }
+
+    public Optional<Folder> findById(Long folderId) {
+        return folderRepository.findById(folderId);
     }
 }
