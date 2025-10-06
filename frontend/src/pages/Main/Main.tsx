@@ -21,7 +21,8 @@ function Main(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
 
-  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder } = useTasks(token);
+  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder } =
+    useTasks(token);
   const { dailies, addDaily, deleteDaily, toggleDaily } = useDailies(token);
 
   const [username, setUsername] = useState("");
@@ -82,7 +83,9 @@ function Main(): JSX.Element {
           label="Task Folder"
           folders={foldersByType[0] || []}
           selectedFolder={selectedFolders[0] ?? "all"}
-          onChange={(value) => setSelectedFolders((prev) => ({ ...prev, 0: value }))}
+          onChange={(value) =>
+            setSelectedFolders((prev) => ({ ...prev, 0: value }))
+          }
           onAdd={() => {
             setNewFolderType(0);
             setIsNewFolderModalOpen(true);
@@ -110,7 +113,9 @@ function Main(): JSX.Element {
           label="Daily Folder"
           folders={foldersByType[1] || []}
           selectedFolder={selectedFolders[1] ?? "all"}
-          onChange={(value) => setSelectedFolders((prev) => ({ ...prev, 1: value }))}
+          onChange={(value) =>
+            setSelectedFolders((prev) => ({ ...prev, 1: value }))
+          }
           onAdd={() => {
             setNewFolderType(1);
             setIsNewFolderModalOpen(true);
@@ -133,7 +138,11 @@ function Main(): JSX.Element {
       </div>
 
       {isTaskModalOpen && (
-        <TaskModal onAdd={addTask} onClose={() => setTaskModalOpen(false)} />
+        <TaskModal
+          onAdd={addTask}
+          onClose={() => setTaskModalOpen(false)}
+          folders={foldersByType[0] || []}
+        />
       )}
 
       {isDailyModalOpen && (
@@ -143,7 +152,9 @@ function Main(): JSX.Element {
       {isEditTaskModalOpen && editingTaskId !== null && (
         <EditTaskModal
           taskId={editingTaskId}
-          currentFolderId={tasks.find((t) => t.task_id === editingTaskId)?.folder_id ?? null}
+          currentFolderId={
+            tasks.find((t) => t.task_id === editingTaskId)?.folder_id ?? null
+          }
           folders={foldersByType[0] || []}
           onSave={async (id, folderId) => {
             await changeTaskFolder(id, folderId);

@@ -20,8 +20,8 @@ export default function useTasks(token: string) {
     if (token) refresh();
   }, [token]);
 
-  const addTask = async (title: string) => {
-    await AddNewTask(token, title);
+  const addTask = async (title: string, folderId: number | null) => {
+    await AddNewTask(token, title, folderId);
     await refresh();
   };
 
@@ -36,9 +36,9 @@ export default function useTasks(token: string) {
     await refresh();
   };
 
-const changeTaskFolder = async (id: number, folderId: number | null) => {
+  const changeTaskFolder = async (id: number, folderId: number | null) => {
     const updated = await UpdateTaskFolder(token, id, folderId);
     if (updated) await refresh();
   };
-  return { tasks, addTask, deleteTask, toggleTask, changeTaskFolder};
+  return { tasks, addTask, deleteTask, toggleTask, changeTaskFolder };
 }
