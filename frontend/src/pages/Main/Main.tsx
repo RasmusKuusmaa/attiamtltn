@@ -4,9 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { TopBarContext } from "../../context/TopBarcontext";
 import { getCurrentUser } from "../../services/userService";
 import "./Main.css";
-
 import FolderSelect from "../../components/FolderSelect/FolderSelect";
-
 import useTasks from "../../hooks/useTasks";
 import useDailies from "../../hooks/useDailies";
 import useFolders from "../../hooks/useFolders";
@@ -16,8 +14,6 @@ import TaskModal from "../../components/TaskModal/TaskModal";
 import DailyModal from "../../components/DailyModal/DailyModal";
 import EditTaskModal from "../../components/EditTaskModal/EditTaskModal";
 import NewFolderModal from "../../components/NewFolderModal/NewFolderModal";
-import { features, title } from "process";
-import { addNewFolder } from "../../services/folderService";
 
 function Main(): JSX.Element {
   const { logout } = useContext(AuthContext);
@@ -25,8 +21,7 @@ function Main(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
 
-  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder } =
-    useTasks(token);
+  const { tasks, addTask, deleteTask, toggleTask, changeTaskFolder } = useTasks(token);
   const { dailies, addDaily, deleteDaily, toggleDaily } = useDailies(token);
 
   const [username, setUsername] = useState("");
@@ -57,46 +52,51 @@ function Main(): JSX.Element {
     logout();
     navigate("/login");
   }
+
   async function handleTaskEdit(id: number) {
     setEditingTaskId(id);
     setIsEditTaskModalOpen(true);
   }
 
   const {
-    taskFolders,
-    dailyFolders,
-    selectedTaskFolder,
-    setSelectedTaskFolder,
-    selectedDailyFolder,
-    setSelectedDailyFolder,
-  } = useFolders(token);
+    foldersByType,
+    selectedFolders,
+    setSelectedFolders,
+    addNewFolder,
+    totalCountsByType,
+    unassignedCountsByType,
+  } = useFolders(token, {
+    0: tasks,
+    1: dailies,
+  });
 
   async function handleNewFolder(title: string, folderType: number) {
-    await addNewFolder(token, title, folderType);
+    await addNewFolder(title, folderType);
     setIsNewFolderModalOpen(false);
   }
+
   return (
     <div className="mainpage-wrapper">
-      {/* Task Section */}
       <div>
         <FolderSelect
           label="Task Folder"
-          folders={taskFolders}
-          selectedFolder={selectedTaskFolder}
-          onChange={setSelectedTaskFolder}
+          folders={foldersByType[0] || []}
+          selectedFolder={selectedFolders[0] ?? "all"}
+          onChange={(value) => setSelectedFolders((prev) => ({ ...prev, 0: value }))}
           onAdd={() => {
             setNewFolderType(0);
             setIsNewFolderModalOpen(true);
           }}
+          totalCount={totalCountsByType[0] ?? 0}
+          unassignedCount={unassignedCountsByType[0] ?? 0}
         />
-
         <TaskList
           tasks={
-            selectedTaskFolder === "all"
+            selectedFolders[0] === "all"
               ? tasks
-              : selectedTaskFolder === "unassigned"
+              : selectedFolders[0] === "unassigned"
               ? tasks.filter((t) => !t.folder_id || t.folder_id === 0)
-              : tasks.filter((t) => t.folder_id === selectedTaskFolder)
+              : tasks.filter((t) => t.folder_id === selectedFolders[0])
           }
           onDelete={deleteTask}
           onToggle={toggleTask}
@@ -105,25 +105,26 @@ function Main(): JSX.Element {
         />
       </div>
 
-      {/* Daily Section */}
       <div>
         <FolderSelect
           label="Daily Folder"
-          folders={dailyFolders}
-          selectedFolder={selectedDailyFolder}
-          onChange={setSelectedDailyFolder}
+          folders={foldersByType[1] || []}
+          selectedFolder={selectedFolders[1] ?? "all"}
+          onChange={(value) => setSelectedFolders((prev) => ({ ...prev, 1: value }))}
           onAdd={() => {
-            setIsNewFolderModalOpen(true);
             setNewFolderType(1);
+            setIsNewFolderModalOpen(true);
           }}
+          totalCount={totalCountsByType[1] ?? 0}
+          unassignedCount={unassignedCountsByType[1] ?? 0}
         />
         <DailyList
           dailies={
-            selectedDailyFolder === "all"
+            selectedFolders[1] === "all"
               ? dailies
-              : selectedDailyFolder === "unassigned"
+              : selectedFolders[1] === "unassigned"
               ? dailies.filter((d) => !d.folder_id || d.folder_id === 0)
-              : dailies.filter((d) => d.folder_id === selectedDailyFolder)
+              : dailies.filter((d) => d.folder_id === selectedFolders[1])
           }
           onDelete={deleteDaily}
           onToggle={toggleDaily}
@@ -142,10 +143,8 @@ function Main(): JSX.Element {
       {isEditTaskModalOpen && editingTaskId !== null && (
         <EditTaskModal
           taskId={editingTaskId}
-          currentFolderId={
-            tasks.find((t) => t.task_id === editingTaskId)?.folder_id ?? null
-          }
-          folders={taskFolders}
+          currentFolderId={tasks.find((t) => t.task_id === editingTaskId)?.folder_id ?? null}
+          folders={foldersByType[0] || []}
           onSave={async (id, folderId) => {
             await changeTaskFolder(id, folderId);
             setIsEditTaskModalOpen(false);
