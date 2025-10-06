@@ -33,4 +33,11 @@ public class FolderService {
     public Optional<Folder> findById(Long folderId) {
         return folderRepository.findById(folderId);
     }
+
+    public boolean deleteFolder(Long id) {
+        return folderRepository.findById(id).map(folder -> {
+            folderRepository.delete(folder);
+            return true;
+        }).orElse(false);
+    }
 }
