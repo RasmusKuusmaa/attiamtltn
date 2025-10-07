@@ -1,0 +1,17 @@
+.note-sidebar {
+  width: 250px;
+  border-right: 1px solid #ccc;
+  padding: 1rem;
+}
+
+.note-sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.note-item.selected {
+  background-color: lightblue;
+}
+
+
