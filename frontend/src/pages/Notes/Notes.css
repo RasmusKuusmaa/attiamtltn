@@ -1,0 +1,30 @@
+.notes-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.note-sidebar {
+  width: 250px;
+  border-right: 1px solid #ccc;
+  padding: 1rem;
+}
+
+.note-content-area {
+  flex: 1;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.note-content-editable {
+  flex: 1;
+  font-size: 1rem;
+  line-height: 1.5;
+  padding: 0.75rem;
+  resize: none;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-family: inherit;
+  white-space: pre-wrap;
+}
