@@ -27,4 +27,12 @@ public class NoteService {
         note.setTitle(title);
         return noteRepository.save(note);
     }
+
+    public boolean deleteNote(Long id) {
+        return noteRepository.findById(id).map(note -> {
+            noteRepository.delete(note);
+            return true;
+        })
+                .orElse(false);
+    }
 }
