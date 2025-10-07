@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Folder } from "../types";
 import {
   getUserFolders,
   addNewFolder as addNewFolderService,
-  deleteFolder as deleteFolderService
+  deleteFolder as deleteFolderService,
 } from "../services/folderService";
 
 type FolderItemsMap = {
@@ -24,12 +24,19 @@ export default function useFolders(
   const [selectedFolders, setSelectedFolders] =
     useState<Record<number, number | "all" | "unassigned">>(initialSelections);
 
-  useEffect(() => {
+  const refreshFolders = useCallback(async () => {
     if (!token) return;
-    getUserFolders(token)
-      .then((data) => setFolders(data))
-      .catch(console.error);
+    try {
+      const data = await getUserFolders(token);
+      setFolders(data);
+    } catch (err) {
+      console.error("Failed to refresh folders:", err);
+    }
   }, [token]);
+
+  useEffect(() => {
+    refreshFolders();
+  }, [refreshFolders]);
 
   const foldersWithCounts = folders.map((folder) => {
     const relatedItems = folderItemsMap[folder.folderType] ?? [];
@@ -58,20 +65,22 @@ export default function useFolders(
 
   const addNewFolder = async (title: string, folderType: number) => {
     await addNewFolderService(token, title, folderType);
-    const updated = await getUserFolders(token);
-    setFolders(updated);
+    await refreshFolders();
   };
 
   const deleteFolder = async (id: number) => {
     await deleteFolderService(token, id);
+    await refreshFolders();
   };
+
   return {
     foldersByType,
     selectedFolders,
     setSelectedFolders,
     addNewFolder,
+    deleteFolder,
     totalCountsByType,
     unassignedCountsByType,
-    deleteFolder,
+    refreshFolders,
   };
 }

@@ -1,5 +1,3 @@
-import { ok } from "assert";
-
 const API_URL = "http://localhost:8080/api/user/folders";
 
 export async function getUserFolders(token: string) {
