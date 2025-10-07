@@ -24,6 +24,15 @@ function SideBar(): JSX.Element {
               Stats
             </NavLink>
           </li>
+
+          <li>
+            <NavLink
+              to="/notes"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
+              Notes
+            </NavLink>
+          </li>
         </ul>
       </nav>
     </div>
