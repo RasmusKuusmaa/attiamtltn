@@ -21,4 +21,10 @@ public class NoteService {
         return noteRepository.findByUser(user);
     }
 
+    public Note createNote(User user, String title) {
+        Note note = new Note();
+        note.setUser(user);
+        note.setTitle(title);
+        return noteRepository.save(note);
+    }
 }

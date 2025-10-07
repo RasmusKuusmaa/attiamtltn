@@ -6,10 +6,15 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.attiatlttofafrn.backend.dto.note.NoteRequest;
 import com.attiatlttofafrn.backend.dto.note.NoteResponse;
+import com.attiatlttofafrn.backend.model.Note;
+import com.attiatlttofafrn.backend.repository.NoteRepository;
 import com.attiatlttofafrn.backend.service.NoteService;
 import com.attiatlttofafrn.backend.service.UserService;
 
@@ -41,5 +46,23 @@ public class NoteController {
                         note.getUpdatedAt()
                 )).toList()
         )).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping("")
+    public ResponseEntity<?> addnote(Authentication auth, @RequestBody NoteRequest request) {
+        String email = auth.getName();
+
+        return userService.findByEmail(email)
+                .map(user -> {
+                    Note note = noteService.createNote(user, request.title());
+                    NoteResponse response = new NoteResponse(
+                            note.getId(),
+                            note.getTitle(),
+                            note.getContent(),
+                            note.getCreatedAt(),
+                            note.getUpdatedAt()
+                    );
+                    return ResponseEntity.ok(response);
+                }).orElse(ResponseEntity.notFound().build());
     }
 }
