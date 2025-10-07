@@ -1,12 +1,19 @@
 import { useEffect, useState } from "react";
 import { Folder } from "../types";
-import { getUserFolders, addNewFolder as addNewFolderService } from "../services/folderService";
+import {
+  getUserFolders,
+  addNewFolder as addNewFolderService,
+  deleteFolder as deleteFolderService
+} from "../services/folderService";
 
 type FolderItemsMap = {
   [folderType: number]: { folder_id?: number | null }[];
 };
 
-export default function useFolders(token: string, folderItemsMap: FolderItemsMap) {
+export default function useFolders(
+  token: string,
+  folderItemsMap: FolderItemsMap
+) {
   const [folders, setFolders] = useState<Folder[]>([]);
 
   const initialSelections = Object.keys(folderItemsMap).reduce((acc, type) => {
@@ -14,7 +21,8 @@ export default function useFolders(token: string, folderItemsMap: FolderItemsMap
     return acc;
   }, {} as Record<number, number | "all" | "unassigned">);
 
-  const [selectedFolders, setSelectedFolders] = useState<Record<number, number | "all" | "unassigned">>(initialSelections);
+  const [selectedFolders, setSelectedFolders] =
+    useState<Record<number, number | "all" | "unassigned">>(initialSelections);
 
   useEffect(() => {
     if (!token) return;
@@ -25,7 +33,9 @@ export default function useFolders(token: string, folderItemsMap: FolderItemsMap
 
   const foldersWithCounts = folders.map((folder) => {
     const relatedItems = folderItemsMap[folder.folderType] ?? [];
-    const count = relatedItems.filter((item) => item.folder_id === folder.folder_id).length;
+    const count = relatedItems.filter(
+      (item) => item.folder_id === folder.folder_id
+    ).length;
     return { ...folder, taskCount: count };
   });
 
@@ -41,7 +51,9 @@ export default function useFolders(token: string, folderItemsMap: FolderItemsMap
   Object.entries(folderItemsMap).forEach(([typeStr, items]) => {
     const type = Number(typeStr);
     totalCountsByType[type] = items.length;
-    unassignedCountsByType[type] = items.filter((i) => !i.folder_id || i.folder_id === 0).length;
+    unassignedCountsByType[type] = items.filter(
+      (i) => !i.folder_id || i.folder_id === 0
+    ).length;
   });
 
   const addNewFolder = async (title: string, folderType: number) => {
@@ -50,6 +62,9 @@ export default function useFolders(token: string, folderItemsMap: FolderItemsMap
     setFolders(updated);
   };
 
+  const deleteFolder = async (id: number) => {
+    await deleteFolderService(token, id);
+  };
   return {
     foldersByType,
     selectedFolders,
@@ -57,5 +72,6 @@ export default function useFolders(token: string, folderItemsMap: FolderItemsMap
     addNewFolder,
     totalCountsByType,
     unassignedCountsByType,
+    deleteFolder,
   };
 }

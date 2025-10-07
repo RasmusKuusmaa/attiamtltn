@@ -65,6 +65,7 @@ function Main(): JSX.Element {
     setSelectedFolders,
     addNewFolder,
     totalCountsByType,
+    deleteFolder,
     unassignedCountsByType,
   } = useFolders(token, {
     0: tasks,
@@ -92,6 +93,7 @@ function Main(): JSX.Element {
           }}
           totalCount={totalCountsByType[0] ?? 0}
           unassignedCount={unassignedCountsByType[0] ?? 0}
+          onDelete={deleteFolder}
         />
         <TaskList
           tasks={
@@ -122,6 +124,7 @@ function Main(): JSX.Element {
           }}
           totalCount={totalCountsByType[1] ?? 0}
           unassignedCount={unassignedCountsByType[1] ?? 0}
+          onDelete={deleteFolder}
         />
         <DailyList
           dailies={
