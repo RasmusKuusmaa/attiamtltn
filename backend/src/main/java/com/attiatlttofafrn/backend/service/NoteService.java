@@ -4,9 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.attiatlttofafrn.backend.dto.note.NoteUpdateRequest;
 import com.attiatlttofafrn.backend.model.Note;
 import com.attiatlttofafrn.backend.model.User;
 import com.attiatlttofafrn.backend.repository.NoteRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class NoteService {
@@ -34,5 +37,14 @@ public class NoteService {
             return true;
         })
                 .orElse(false);
+    }
+
+    public boolean updateNote(Long noteId, NoteUpdateRequest request) {
+        Note note = noteRepository.findById(noteId)
+                .orElseThrow(() -> new EntityNotFoundException("Note not found"));
+
+        note.setContent(request.content());
+        noteRepository.save(note);
+        return true;
     }
 }
