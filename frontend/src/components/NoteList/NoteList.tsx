@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Note } from "../../types/Note";
 import "./NoteList.css";
 
@@ -17,12 +17,17 @@ export const NoteList: React.FC<NoteListProps> = ({
   onDelete,
   onAdd,
 }) => {
-  const selectedNote = notes.find((note) => note.id === selectedId);
+  const [title, setTitle] = useState("Notes");
+
+  useEffect(() => {
+    const selectedNote = notes.find((n) => n.id === selectedId);
+  }, [selectedId, notes]);
+
   return (
     <aside className="note-sidebar">
-      <h2>{selectedNote?.title} </h2>
-      <button onClick={onAdd}>
-        <h1>+</h1>
+      <h2>{title}</h2>
+      <button onClick={onAdd} className="note-new-button">
+        +
       </button>
       <ul className="note-sidebar-list">
         {notes.length === 0 && <li className="note-empty">No notes yet</li>}
@@ -31,13 +36,15 @@ export const NoteList: React.FC<NoteListProps> = ({
             key={note.id}
             className={`note-item ${note.id === selectedId ? "selected" : ""}`}
             onClick={() => onSelect(note.id)}
-
           >
             {note.title || "Untitled"}
-            <button onClick={(e) => {
-              e.stopPropagation();
-              onDelete(note.id);
-            }}>
+            <button
+              className="note-delete-button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(note.id);
+              }}
+            >
               X
             </button>
           </li>

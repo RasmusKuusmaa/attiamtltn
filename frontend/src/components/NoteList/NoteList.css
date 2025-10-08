@@ -2,6 +2,7 @@
   width: 250px;
   border-right: 1px solid #ccc;
   padding: 1rem;
+  user-select: none;
 }
 
 .note-sidebar-list {
@@ -14,4 +15,26 @@
   background-color: lightblue;
 }
 
-
+.note-new-button {
+  margin: 10px 0;
+}
+button {
+  cursor: pointer;
+}
+.note-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 5px 0;
+  border: 2px solid #ccc;
+  height: 40px;
+  cursor: pointer;
+  align-items: center;
+  padding: 0 8px;
+  box-sizing: border-box;
+}
+.note-delete-button {
+  background-color: red;
+}
+.note-delete-button:hover {
+  background-color: lightblue;
+}

@@ -7,55 +7,58 @@ import NewNoteModal from "../../components/NewNoteModal/NewNoteModal";
 
 function useDebouncedValue<T>(value: T, delay: number) {
   const [debounced, setDebounced] = useState(value);
-
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(value), delay);
     return () => clearTimeout(timer);
   }, [value, delay]);
-
   return debounced;
 }
 
 function Notes(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
-  const { notes, updateNoteContent, deleteNote, refresh, addNote } =
-    useNotes(token);
+  const { notes, updateNoteContent, deleteNote, addNote } = useNotes(token);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const selectedNote = notes.find((n) => n.id === selectedId);
 
-  const [content, setContentValue] = useState(selectedNote?.content || "");
+  const [content, setContentValue] = useState("");
   const debouncedContent = useDebouncedValue(content, 800);
 
+  const [isNewNoteModalOpen, setIsNewNoteModalOpen] = useState(false);
+
   useEffect(() => {
-    setContent(
-      <div>
-        <h1>Notes</h1>
-      </div>
-    );
+    setContent(<div><h1>Notes</h1></div>);
   }, [setContent]);
 
   useEffect(() => {
-    if (selectedNote) setContentValue(selectedNote.content);
-  }, [selectedNote]);
+    if (selectedNote) {
+      setContentValue(selectedNote.content ?? "");
+    } else {
+      setContentValue("");
+    }
+  }, [selectedNote?.id]);
 
   useEffect(() => {
-    if (selectedNote && debouncedContent !== selectedNote.content) {
+    if (selectedNote && debouncedContent !== (selectedNote.content ?? "")) {
       updateNoteContent(selectedNote.id, debouncedContent);
     }
   }, [debouncedContent]);
 
   const handleNoteDeletion = async (id: number) => {
     await deleteNote(id);
-    await refresh();
+    if (selectedId === id) {
+      setSelectedId(null);
+      setContentValue("");
+    }
   };
-  const [isNewNoteModalOpen, setIsNewNoteModalOpen] = useState(false);
 
   const handleNewNote = async (title: string) => {
-    await addNote(title);
-    await refresh();
+    const newNote = await addNote(title);
+    setSelectedId(newNote.id);
+    setContentValue("");
   };
+
   return (
     <div className="notes-container">
       <NoteList
@@ -63,23 +66,17 @@ function Notes(): JSX.Element {
         selectedId={selectedId}
         onSelect={setSelectedId}
         onDelete={handleNoteDeletion}
-        onAdd={() => {
-          setIsNewNoteModalOpen(true);
-        }}
+        onAdd={() => setIsNewNoteModalOpen(true)}
       />
       <div className="note-content-area">
-        {selectedNote ? (
-          <textarea
-            className="note-content-editable"
-            value={content}
-            onChange={(e) => setContentValue(e.target.value)}
-            placeholder="Write your note..."
-          />
-        ) : (
-          <div>Select a note to edit</div>
-        )}
+        <textarea
+          className="note-content-editable"
+          value={selectedNote ? content : ""}
+          onChange={(e) => setContentValue(e.target.value)}
+          placeholder={selectedNote ? "Write your note..." : "Select a note to edit"}
+          disabled={!selectedNote}
+        />
       </div>
-
       {isNewNoteModalOpen && (
         <NewNoteModal
           onAdd={handleNewNote}

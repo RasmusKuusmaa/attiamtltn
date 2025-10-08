@@ -5,19 +5,23 @@ import { tokenToString } from "typescript";
 const API_URL = "http://localhost:8080/api/user/notes";
 
 export async function getUserNotes(token: string) {
-    const response = await fetch(`${API_URL}`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    });
-    if (!response.ok){
-        throw new Error("Failed to fetch user notes");
-    }
-    return response.json();
+  const response = await fetch(`${API_URL}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch user notes");
+  }
+  return response.json();
 }
 
-export async function updateUserNoteContent(token: string, id: number, content: string) {
+export async function updateUserNoteContent(
+  token: string,
+  id: number,
+  content: string
+) {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "PUT",
     headers: {
@@ -34,29 +38,31 @@ export async function updateUserNoteContent(token: string, id: number, content: 
   return response.json();
 }
 
-export async function deleteUserNote(token: string, id: number){
+export async function deleteUserNote(token: string, id: number) {
   const response = await fetch(`${API_URL}/${id}`, {
     method: "DELETE",
     headers: {
       Authorization: `Bearer ${token}`,
-      
     },
   });
-  if (!response.ok){
+  if (!response.ok) {
     throw new Error("Failed to delete note");
   }
 }
 
-export async function addUserNote(token: string, title: string){
+export async function addUserNote(token: string, title: string) {
   const response = await fetch(`${API_URL}`, {
-    method:"POST",
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({title}),
+    body: JSON.stringify({ title }),
   });
-  if (!response.ok){
+  if (!response.ok) {
     throw new Error("Failed to add note");
   }
+
+  const newNote = await response.json();
+  return newNote;
 }

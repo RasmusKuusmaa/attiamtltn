@@ -42,13 +42,11 @@ export default function useNotes(token: string) {
     }
   };
 
-  const addNote = async (title:string) => {
-    try {
-      await addUserNote(token, title);
-    } catch (err){
-      console.error("Failed to add note");
-    }
-  }
+  const addNote = async (title: string): Promise<Note> => {
+    const newNote = await addUserNote(token, title);
+    setNotes((prev) => [...prev, newNote]);
+    return newNote;
+  };
 
   return { notes, updateNoteContent, refresh, deleteNote, addNote };
 }
