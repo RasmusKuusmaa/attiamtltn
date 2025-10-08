@@ -3,6 +3,7 @@ import { TopBarContext } from "../../context/TopBarcontext";
 import { NoteList } from "../../components/NoteList/NoteList";
 import useNotes from "../../hooks/useNotes";
 import "./Notes.css";
+import NewNoteModal from "../../components/NewNoteModal/NewNoteModal";
 
 function useDebouncedValue<T>(value: T, delay: number) {
   const [debounced, setDebounced] = useState(value);
@@ -18,7 +19,8 @@ function useDebouncedValue<T>(value: T, delay: number) {
 function Notes(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
-  const { notes, updateNoteContent, deleteNote, refresh,addNote } = useNotes(token);
+  const { notes, updateNoteContent, deleteNote, refresh, addNote } =
+    useNotes(token);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const selectedNote = notes.find((n) => n.id === selectedId);
@@ -27,7 +29,11 @@ function Notes(): JSX.Element {
   const debouncedContent = useDebouncedValue(content, 800);
 
   useEffect(() => {
-    setContent(<div><h1>Notes</h1></div>);
+    setContent(
+      <div>
+        <h1>Notes</h1>
+      </div>
+    );
   }, [setContent]);
 
   useEffect(() => {
@@ -43,11 +49,13 @@ function Notes(): JSX.Element {
   const handleNoteDeletion = async (id: number) => {
     await deleteNote(id);
     await refresh();
-  }
-  const handleNewNote = async () => {
-    await addNote("fesfes");
+  };
+  const [isNewNoteModalOpen, setIsNewNoteModalOpen] = useState(false);
+
+  const handleNewNote = async (title: string) => {
+    await addNote(title);
     await refresh();
-  }
+  };
   return (
     <div className="notes-container">
       <NoteList
@@ -55,7 +63,9 @@ function Notes(): JSX.Element {
         selectedId={selectedId}
         onSelect={setSelectedId}
         onDelete={handleNoteDeletion}
-        onAdd={handleNewNote}
+        onAdd={() => {
+          setIsNewNoteModalOpen(true);
+        }}
       />
       <div className="note-content-area">
         {selectedNote ? (
@@ -69,6 +79,13 @@ function Notes(): JSX.Element {
           <div>Select a note to edit</div>
         )}
       </div>
+
+      {isNewNoteModalOpen && (
+        <NewNoteModal
+          onAdd={handleNewNote}
+          onClose={() => setIsNewNoteModalOpen(false)}
+        />
+      )}
     </div>
   );
 }

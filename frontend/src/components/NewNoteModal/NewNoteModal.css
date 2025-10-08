@@ -1,0 +1,26 @@
+.note-new-modal-overlay {
+  position: fixed;
+  z-index: 999;
+  display: flex;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  justify-content: center;
+  align-items: center;
+}
+.note-new-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 400px;
+  height: 150px;
+}
+.note-new-modal-actions {
+  display: flex;
+  margin: 10px 0;
+  gap: 10px;
+}
+
+.note-new-modal-actions button {
+  border-radius: 6px;
+  border: 1px solid black;
+}
