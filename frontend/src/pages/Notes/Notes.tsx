@@ -18,7 +18,7 @@ function useDebouncedValue<T>(value: T, delay: number) {
 function Notes(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
   const token = localStorage.getItem("token") || "";
-  const { notes, updateNoteContent, deleteNote, refresh } = useNotes(token);
+  const { notes, updateNoteContent, deleteNote, refresh,addNote } = useNotes(token);
 
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const selectedNote = notes.find((n) => n.id === selectedId);
@@ -44,6 +44,10 @@ function Notes(): JSX.Element {
     await deleteNote(id);
     await refresh();
   }
+  const handleNewNote = async () => {
+    await addNote("fesfes");
+    await refresh();
+  }
   return (
     <div className="notes-container">
       <NoteList
@@ -51,6 +55,7 @@ function Notes(): JSX.Element {
         selectedId={selectedId}
         onSelect={setSelectedId}
         onDelete={handleNoteDeletion}
+        onAdd={handleNewNote}
       />
       <div className="note-content-area">
         {selectedNote ? (

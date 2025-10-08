@@ -1,4 +1,5 @@
 import { error } from "console";
+import { json } from "stream/consumers";
 import { tokenToString } from "typescript";
 
 const API_URL = "http://localhost:8080/api/user/notes";
@@ -43,5 +44,19 @@ export async function deleteUserNote(token: string, id: number){
   });
   if (!response.ok){
     throw new Error("Failed to delete note");
+  }
+}
+
+export async function addUserNote(token: string, title: string){
+  const response = await fetch(`${API_URL}`, {
+    method:"POST",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({title}),
+  });
+  if (!response.ok){
+    throw new Error("Failed to add note");
   }
 }

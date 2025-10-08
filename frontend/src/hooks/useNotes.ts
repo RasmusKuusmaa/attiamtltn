@@ -1,6 +1,11 @@
 import { useEffect, useState, useCallback } from "react";
 import { Note } from "../types";
-import { deleteUserNote, getUserNotes, updateUserNoteContent } from "../services/noteService";
+import {
+  addUserNote,
+  deleteUserNote,
+  getUserNotes,
+  updateUserNoteContent,
+} from "../services/noteService";
 
 export default function useNotes(token: string) {
   const [notes, setNotes] = useState<Note[]>([]);
@@ -20,9 +25,7 @@ export default function useNotes(token: string) {
   }, [refresh]);
 
   const updateNoteContent = async (id: number, content: string) => {
-    setNotes((prev) =>
-      prev.map((n) => (n.id === id ? { ...n, content } : n))
-    );
+    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, content } : n)));
 
     try {
       await updateUserNoteContent(token, id, content);
@@ -33,12 +36,19 @@ export default function useNotes(token: string) {
   const deleteNote = async (id: number) => {
     setNotes((prev) => prev.filter((n) => n.id !== id));
     try {
-
       await deleteUserNote(token, id);
-    } catch(err) {
+    } catch (err) {
       console.error("Failed to delete note", err);
+    }
+  };
+
+  const addNote = async (title:string) => {
+    try {
+      await addUserNote(token, title);
+    } catch (err){
+      console.error("Failed to add note");
     }
   }
 
-  return { notes, updateNoteContent, refresh, deleteNote };
+  return { notes, updateNoteContent, refresh, deleteNote, addNote };
 }

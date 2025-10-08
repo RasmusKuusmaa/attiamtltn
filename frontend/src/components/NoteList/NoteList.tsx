@@ -7,6 +7,7 @@ interface NoteListProps {
   selectedId: number | null;
   onSelect: (id: number) => void;
   onDelete: (id: number) => void;
+  onAdd: () => void;
 }
 
 export const NoteList: React.FC<NoteListProps> = ({
@@ -14,11 +15,15 @@ export const NoteList: React.FC<NoteListProps> = ({
   selectedId,
   onSelect,
   onDelete,
+  onAdd,
 }) => {
   const selectedNote = notes.find((note) => note.id === selectedId);
   return (
     <aside className="note-sidebar">
       <h2>{selectedNote?.title} </h2>
+      <button onClick={onAdd}>
+        <h1>+</h1>
+      </button>
       <ul className="note-sidebar-list">
         {notes.length === 0 && <li className="note-empty">No notes yet</li>}
         {notes.map((note) => (
