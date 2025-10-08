@@ -28,7 +28,11 @@ function Notes(): JSX.Element {
   const [isNewNoteModalOpen, setIsNewNoteModalOpen] = useState(false);
 
   useEffect(() => {
-    setContent(<div><h1>Notes</h1></div>);
+    setContent(
+      <div>
+        <h1>Notes</h1>
+      </div>
+    );
   }, [setContent]);
 
   useEffect(() => {
@@ -73,8 +77,13 @@ function Notes(): JSX.Element {
           className="note-content-editable"
           value={selectedNote ? content : ""}
           onChange={(e) => setContentValue(e.target.value)}
-          placeholder={selectedNote ? "Write your note..." : "Select a note to edit"}
+          placeholder={
+            selectedNote ? "Write your note..." : "Select a note to edit"
+          }
           disabled={!selectedNote}
+          onBlur={() => {
+            if (selectedNote) updateNoteContent(selectedNote.id, content);
+          }}
         />
       </div>
       {isNewNoteModalOpen && (
