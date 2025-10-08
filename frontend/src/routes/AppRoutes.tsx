@@ -31,14 +31,16 @@ function AppRoutes(): JSX.Element {
             />
             <Route
               path="/notes"
-              element={isAuthenticated ? <Notes/> : <Navigate to="/notes"/>}
-              />
+              element={isAuthenticated ? <Notes /> : <Navigate to="/notes" />}
+            />
 
             <Route
-            path="/projects"
-            element={isAuthenticated ? <Projects/> : <Navigate to="/projects"/>}
+              path="/projects"
+              element={
+                isAuthenticated ? <Projects /> : <Navigate to="/projects" />
+              }
             />
-            
+
             <Route path="*" element={<Navigate to="/main" />} />
           </Route>
         ) : (
