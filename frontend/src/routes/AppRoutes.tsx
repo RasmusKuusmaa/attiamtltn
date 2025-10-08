@@ -9,6 +9,7 @@ import Stats from "../pages/Stats/Stats";
 import MainLayout from "../layout/MainLayout";
 import TopBarProvider from "../context/TopBarcontext";
 import Notes from "../pages/Notes/Notes";
+import Projects from "../pages/Projects/Projects";
 
 function AppRoutes(): JSX.Element {
   const { isAuthenticated } = useContext(AuthContext);
@@ -33,6 +34,11 @@ function AppRoutes(): JSX.Element {
               element={isAuthenticated ? <Notes/> : <Navigate to="/notes"/>}
               />
 
+            <Route
+            path="/projects"
+            element={isAuthenticated ? <Projects/> : <Navigate to="/projects"/>}
+            />
+            
             <Route path="*" element={<Navigate to="/main" />} />
           </Route>
         ) : (
