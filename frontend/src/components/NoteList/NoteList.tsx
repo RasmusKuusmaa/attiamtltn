@@ -6,12 +6,14 @@ interface NoteListProps {
   notes: Note[];
   selectedId: number | null;
   onSelect: (id: number) => void;
+  onDelete: (id: number) => void;
 }
 
 export const NoteList: React.FC<NoteListProps> = ({
   notes,
   selectedId,
   onSelect,
+  onDelete,
 }) => {
   const selectedNote = notes.find((note) => note.id === selectedId);
   return (
@@ -24,8 +26,15 @@ export const NoteList: React.FC<NoteListProps> = ({
             key={note.id}
             className={`note-item ${note.id === selectedId ? "selected" : ""}`}
             onClick={() => onSelect(note.id)}
+
           >
             {note.title || "Untitled"}
+            <button onClick={(e) => {
+              e.stopPropagation();
+              onDelete(note.id);
+            }}>
+              X
+            </button>
           </li>
         ))}
       </ul>

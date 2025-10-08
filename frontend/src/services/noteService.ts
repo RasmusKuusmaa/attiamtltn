@@ -32,3 +32,16 @@ export async function updateUserNoteContent(token: string, id: number, content: 
 
   return response.json();
 }
+
+export async function deleteUserNote(token: string, id: number){
+  const response = await fetch(`${API_URL}/${id}`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      
+    },
+  });
+  if (!response.ok){
+    throw new Error("Failed to delete note");
+  }
+}
