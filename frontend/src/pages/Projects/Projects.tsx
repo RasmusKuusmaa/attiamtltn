@@ -8,6 +8,7 @@ import useMissions from "../../hooks/useMissions";
 import { MissionBoard } from "../../components/ScrumBoard/ScrumBoard";
 import useMissionTasks from "../../hooks/useMissionTasks";
 import NewProjectModal from "../../components/NewProjectModal/NewProjectModal";
+import NewMissionModal from "../../components/NewMissionModal/NewMissionModal";
 
 function Projects(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
@@ -27,7 +28,7 @@ function Projects(): JSX.Element {
   );
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
-  const { missions } = useMissions(token, selectedProjectId);
+  const { missions, addMission } = useMissions(token, selectedProjectId);
   const [selectedMissionId, setSelectedMissionId] = useState<number | null>(
     null
   );
@@ -47,7 +48,13 @@ function Projects(): JSX.Element {
     if (id === selectedProjectId) {
       setSelectedProjectId(null);
     }
-  }
+  };
+
+  const handleNewMission = async (title: string) => {
+    const newMission = await addMission(title);
+    setSelectedMissionId(newMission.id);
+  };
+  const [isNewMissionModalOpen, setIsNewMissionModalOpen] = useState(false);
   const [isnewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   return (
     <div className="projects-container">
@@ -63,6 +70,7 @@ function Projects(): JSX.Element {
         missions={missions}
         selectedId={selectedMissionId}
         onSelect={setSelectedMissionId}
+        onAdd={() => setIsNewMissionModalOpen(true)}
       />
 
       {selectedMissionId && (
@@ -74,6 +82,13 @@ function Projects(): JSX.Element {
         <NewProjectModal
           onAdd={handleNewProject}
           onClose={() => setIsNewProjectModalOpen(false)}
+        />
+      )}
+
+      {isNewMissionModalOpen && (
+        <NewMissionModal
+          onAdd={handleNewMission}
+          onClose={() => setIsNewMissionModalOpen(false)}
         />
       )}
     </div>

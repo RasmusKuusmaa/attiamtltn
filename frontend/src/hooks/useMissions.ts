@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { Mission } from "../types";
-import { getProjectMissions } from "../services/missionService";
+import {
+  addProjectMission,
+  getProjectMissions,
+} from "../services/missionService";
+import { title } from "process";
+import { addUserNote } from "../services/noteService";
+import { addUserProject } from "../services/projectService";
 
 export default function useMissions(token: string, projectId: number | null) {
   const [missions, setMissions] = useState<Mission[]>([]);
@@ -29,5 +35,10 @@ export default function useMissions(token: string, projectId: number | null) {
     refresh();
   }, [refresh]);
 
-  return { missions, refresh, loading };
+  const addMission = async (title: string) => {
+    const newMission = await addProjectMission(token, projectId, title);
+    setMissions((prev) => [...prev, newMission]);
+    return newMission;
+  };
+  return { missions, refresh, loading, addMission };
 }
