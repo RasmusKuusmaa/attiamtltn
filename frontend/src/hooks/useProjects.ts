@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Project } from "../types/Project";
-import { getUserProjects } from "../services/projectService";
+import { addUserProject, getUserProjects } from "../services/projectService";
 
 export default function useProjects(token: string) {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -19,5 +19,11 @@ export default function useProjects(token: string) {
     refresh();
   }, [refresh]);
 
-  return { projects, refresh };
+  const addProjects = async (title: string): Promise<Project> => {
+    const newProjet = await addUserProject(token, title);
+    setProjects((prev) => [...prev, newProjet]);
+    return newProjet;
+  };
+
+  return { projects, refresh, addProjects };
 }

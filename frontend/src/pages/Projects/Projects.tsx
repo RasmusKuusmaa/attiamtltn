@@ -7,6 +7,7 @@ import { MissionList } from "../../components/MissionList/MissionList";
 import useMissions from "../../hooks/useMissions";
 import { MissionBoard } from "../../components/ScrumBoard/ScrumBoard";
 import useMissionTasks from "../../hooks/useMissionTasks";
+import NewProjectModal from "../../components/NewProjectModal/NewProjectModal";
 
 function Projects(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
@@ -20,7 +21,7 @@ function Projects(): JSX.Element {
   }, [setContent]);
 
   const token = localStorage.getItem("token") || "";
-  const { projects } = useProjects(token);
+  const { projects, addProjects } = useProjects(token);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
     null
   );
@@ -35,12 +36,19 @@ function Projects(): JSX.Element {
     token,
     selectedMissionId
   );
+
+  const handleNewProject = async (title: string) => {
+    const newProject = await addProjects(title);
+    setSelectedProjectId(newProject.id);
+  };
+  const [isnewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   return (
     <div className="projects-container">
       <ProjectList
         projects={projects}
         selectedId={selectedProjectId}
         onSelect={setSelectedProjectId}
+        onAdd={() => setIsNewProjectModalOpen(true)}
       />
 
       <MissionList
@@ -51,6 +59,14 @@ function Projects(): JSX.Element {
 
       {selectedMissionId && (
         <MissionBoard tasks={tasks} loading={tasksLoading} />
+      )}
+
+      {/* Modals */}
+      {isnewProjectModalOpen && (
+        <NewProjectModal
+          onAdd={handleNewProject}
+          onClose={() => setIsNewProjectModalOpen(false)}
+        />
       )}
     </div>
   );

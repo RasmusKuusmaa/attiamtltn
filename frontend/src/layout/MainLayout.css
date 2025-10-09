@@ -3,7 +3,6 @@
     flex-direction: column;
     height: 100vh;
     width: 100vw; 
-    overflow-x: hidden;
 }
 
 .layout-topbar {
@@ -19,8 +18,8 @@
 
 .layout-body {
     flex: 1;
-    position: relative;
     overflow: hidden;
+    display: flex;
 }
 
 .layout-content {
@@ -44,3 +43,5 @@
     border-left: 1px solid black;
     overflow: auto;
 }
+
+
