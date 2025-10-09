@@ -29,3 +29,17 @@ export async function addUserProject(token: string, title: string) {
     const newProjet = await response.json();
     return newProjet;
 }
+
+export async function deleteUserProject(token: string, id: number) {
+    const response = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!response.ok){
+        throw new Error("Failed to delete project");
+    }
+} 

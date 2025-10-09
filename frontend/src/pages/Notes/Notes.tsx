@@ -52,7 +52,9 @@ function Notes(): JSX.Element {
   const handleNoteDeletion = async (id: number) => {
     await deleteNote(id);
     if (selectedId === id) {
-      setSelectedId(null);
+      if (id === selectedId) {
+        setSelectedId(null);
+      }
       setContentValue("");
     }
   };

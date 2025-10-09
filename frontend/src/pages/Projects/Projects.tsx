@@ -21,7 +21,7 @@ function Projects(): JSX.Element {
   }, [setContent]);
 
   const token = localStorage.getItem("token") || "";
-  const { projects, addProjects } = useProjects(token);
+  const { projects, addProjects, deleteProject } = useProjects(token);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
     null
   );
@@ -41,6 +41,13 @@ function Projects(): JSX.Element {
     const newProject = await addProjects(title);
     setSelectedProjectId(newProject.id);
   };
+
+  const handleProjectDeletion = async (id: number) => {
+    await deleteProject(id);
+    if (id === selectedProjectId) {
+      setSelectedProjectId(null);
+    }
+  }
   const [isnewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   return (
     <div className="projects-container">
@@ -49,6 +56,7 @@ function Projects(): JSX.Element {
         selectedId={selectedProjectId}
         onSelect={setSelectedProjectId}
         onAdd={() => setIsNewProjectModalOpen(true)}
+        onDelete={handleProjectDeletion}
       />
 
       <MissionList

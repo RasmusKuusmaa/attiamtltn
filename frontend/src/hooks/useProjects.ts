@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Project } from "../types/Project";
-import { addUserProject, getUserProjects } from "../services/projectService";
+import { addUserProject, deleteUserProject, getUserProjects } from "../services/projectService";
 
 export default function useProjects(token: string) {
   const [projects, setProjects] = useState<Project[]>([]);
@@ -25,5 +25,14 @@ export default function useProjects(token: string) {
     return newProjet;
   };
 
-  return { projects, refresh, addProjects };
+  const deleteProject = async (id: number) => {
+    setProjects((prev) => prev.filter((p) => p.id !== id));
+    try {
+      
+      await deleteUserProject(token, id);
+    } catch (err) {
+      console.error("Failed to delete project", err);
+    };
+  }
+  return { projects, refresh, addProjects, deleteProject };
 }
