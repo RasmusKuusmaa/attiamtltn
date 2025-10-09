@@ -3,6 +3,8 @@ import "./Projects.css";
 import { TopBarContext } from "../../context/TopBarcontext";
 import useProjects from "../../hooks/useProjects";
 import { ProjectList } from "../../components/ProjectList/ProjectList";
+import { MissionList } from "../../components/MissionList/MissionList";
+import useMissions from "../../hooks/useMissions";
 
 function Projects(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
@@ -17,19 +19,25 @@ function Projects(): JSX.Element {
 
   const token = localStorage.getItem("token") || "";
   const {projects} = useProjects(token);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const selectedProject = projects.find((p) => p.id === selectedId);
+  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
+  const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
+  const {missions} = useMissions(token, selectedProjectId);
+  const [selectedMissionsId, setSelectedMissionId] = useState<number | null>(null);
+  
   return (
     <div className="projects-container">
       <ProjectList
       projects={projects}
-      selectedId={selectedId}
-      onSelect={setSelectedId}
+      selectedId={selectedProjectId}
+      onSelect={setSelectedProjectId}
       />
-      <div>
-        
-      </div>
+      
+      <MissionList
+      missions={missions}
+      selectedId={selectedMissionsId}
+      onSelect={setSelectedMissionId}
+      />
     </div>
   );
 }
