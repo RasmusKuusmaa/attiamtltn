@@ -29,6 +29,7 @@ export const MissionBoard: React.FC<MissionBoardProps> = ({
   onStatusChange,
 }) => {
   const [currentTasks, setCurrentTasks] = useState<MissionTask[]>([]);
+
   useEffect(() => {
     const normalized = tasks.map((t) => ({
       ...t,
@@ -42,7 +43,6 @@ export const MissionBoard: React.FC<MissionBoardProps> = ({
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over) return;
-
     const taskId = Number(active.id);
     const newStatus = over.id.toString();
 
@@ -104,7 +104,9 @@ const Column: React.FC<ColumnProps> = ({ id, label, tasks }) => {
 
 const TaskCard: React.FC<{ task: MissionTask }> = ({ task }) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: task.id.toString() });
+    useDraggable({
+      id: task.id.toString(),
+    });
 
   const style = {
     transform: transform

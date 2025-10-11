@@ -4,8 +4,8 @@ import { TopBarContext } from "../../context/TopBarcontext";
 import useProjects from "../../hooks/useProjects";
 import { ProjectList } from "../../components/ProjectList/ProjectList";
 import { MissionList } from "../../components/MissionList/MissionList";
-import useMissions from "../../hooks/useMissions";
 import { MissionBoard } from "../../components/ScrumBoard/ScrumBoard";
+import useMissions from "../../hooks/useMissions";
 import useMissionTasks from "../../hooks/useMissionTasks";
 import NewProjectModal from "../../components/NewProjectModal/NewProjectModal";
 import NewMissionModal from "../../components/NewMissionModal/NewMissionModal";
@@ -33,10 +33,11 @@ function Projects(): JSX.Element {
     null
   );
 
-  const { tasks, loading: tasksLoading } = useMissionTasks(
-    token,
-    selectedMissionId
-  );
+  const {
+    tasks,
+    loading: tasksLoading,
+    updateTaskStatus,
+  } = useMissionTasks(token, selectedMissionId);
 
   const handleNewProject = async (title: string) => {
     const newProject = await addProjects(title);
@@ -54,8 +55,10 @@ function Projects(): JSX.Element {
     const newMission = await addMission(title);
     setSelectedMissionId(newMission.id);
   };
+
   const [isNewMissionModalOpen, setIsNewMissionModalOpen] = useState(false);
-  const [isnewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
+  const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
+
   return (
     <div className="projects-container">
       <ProjectList
@@ -74,11 +77,16 @@ function Projects(): JSX.Element {
       />
 
       {selectedMissionId && (
-        <MissionBoard tasks={tasks} loading={tasksLoading} />
+        <MissionBoard
+          tasks={tasks}
+          loading={tasksLoading}
+          onStatusChange={(taskId, newStatus) =>
+            updateTaskStatus(Number(taskId), newStatus)
+          }
+        />
       )}
 
-      {/* Modals */}
-      {isnewProjectModalOpen && (
+      {isNewProjectModalOpen && (
         <NewProjectModal
           onAdd={handleNewProject}
           onClose={() => setIsNewProjectModalOpen(false)}
