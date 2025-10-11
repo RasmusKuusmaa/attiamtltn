@@ -46,10 +46,13 @@ public class MissionTaskService {
     public boolean updateTask(Long id, MissionTaskUpdateRequest request) {
         MissionTask task = missionTaskRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Task not found"));
-        task.setTitle(request.title());
-        task.setDescription(request.description());
-        task.setStatus(request.status());
+
+        request.title().ifPresent(task::setTitle);
+        request.description().ifPresent(task::setDescription);
+        request.status().ifPresent(task::setStatus);
+
         missionTaskRepository.save(task);
         return true;
     }
+
 }

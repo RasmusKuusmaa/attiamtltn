@@ -2,6 +2,7 @@ package com.attiatlttofafrn.backend.model;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 @Table(name = "mission_tasks")
@@ -48,16 +49,16 @@ public class MissionTask {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setTitle(String title2) {
+        this.title = title2;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setDescription(String description2) {
+        this.description = description2;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -91,4 +92,5 @@ public class MissionTask {
     public void setStatus(String status) {
         this.status = status;
     }
+
 }
