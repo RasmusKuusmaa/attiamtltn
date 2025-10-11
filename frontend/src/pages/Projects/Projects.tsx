@@ -9,6 +9,8 @@ import useMissions from "../../hooks/useMissions";
 import useMissionTasks from "../../hooks/useMissionTasks";
 import NewProjectModal from "../../components/NewProjectModal/NewProjectModal";
 import NewMissionModal from "../../components/NewMissionModal/NewMissionModal";
+import useLocalStoraget from "../../hooks/useLocalStorage";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 function Projects(): JSX.Element {
   const { setContent } = useContext(TopBarContext);
@@ -23,15 +25,15 @@ function Projects(): JSX.Element {
 
   const token = localStorage.getItem("token") || "";
   const { projects, addProjects, deleteProject } = useProjects(token);
-  const [selectedProjectId, setSelectedProjectId] = useState<number | null>(
-    null
-  );
+  const [selectedProjectId, setSelectedProjectId] = useLocalStorage<
+    number | null
+  >("selectedProjectId", null);
   const selectedProject = projects.find((p) => p.id === selectedProjectId);
 
   const { missions, addMission } = useMissions(token, selectedProjectId);
-  const [selectedMissionId, setSelectedMissionId] = useState<number | null>(
-    null
-  );
+  const [selectedMissionId, setSelectedMissionId] = useLocalStorage<
+    number | null
+  >("selectedMissionId", null);
 
   const {
     tasks,
