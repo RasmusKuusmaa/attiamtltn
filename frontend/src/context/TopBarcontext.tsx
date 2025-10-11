@@ -1,16 +1,16 @@
-import { createContext, JSX, ReactNode, useState } from "react";
-import { TopBarContextType } from "../types/TopBarContextType";
+import { createContext, ReactNode, useState } from "react";
+
+interface TopBarContextType {
+  content: ReactNode;
+  setContent: (content: ReactNode) => void;
+}
 
 export const TopBarContext = createContext<TopBarContextType>({
   content: null,
-  setContent: () => {}, 
+  setContent: () => {},
 });
 
-interface TopBarProviderProps {
-  children: ReactNode;
-}
-
-function TopBarProvider({ children }: TopBarProviderProps): JSX.Element {
+export const TopBarProvider = ({ children }: { children: ReactNode }) => {
   const [content, setContent] = useState<ReactNode>(null);
 
   return (
@@ -18,6 +18,4 @@ function TopBarProvider({ children }: TopBarProviderProps): JSX.Element {
       {children}
     </TopBarContext.Provider>
   );
-}
-
-export default TopBarProvider;
+};

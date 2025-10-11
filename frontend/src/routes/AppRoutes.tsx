@@ -7,9 +7,9 @@ import Main from "../pages/Main/Main";
 import { AuthContext } from "../context/AuthContext";
 import Stats from "../pages/Stats/Stats";
 import MainLayout from "../layout/MainLayout";
-import TopBarProvider from "../context/TopBarcontext";
 import Notes from "../pages/Notes/Notes";
 import Projects from "../pages/Projects/Projects";
+import { TopBarProvider } from "../context/TopBarcontext";
 
 function AppRoutes(): JSX.Element {
   const { isAuthenticated } = useContext(AuthContext);

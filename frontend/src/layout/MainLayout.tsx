@@ -1,15 +1,13 @@
-import { JSX, useContext } from "react";
-import { TopBarContext } from "../context/TopBarcontext";
+import { JSX } from "react";
 import SideBar from "../components/Sidebar/Sidebar";
+import TopBar from "../components/Topbar/Topbar";
 import { Outlet } from "react-router-dom";
 import "./MainLayout.css";
 
 function MainLayout(): JSX.Element {
-  const { content } = useContext(TopBarContext);
-
   return (
     <div className="layout">
-      <div className="layout-topbar">{content}</div>
+      <TopBar username={"f"} />
       <div className="layout-body">
         <div className="layout-content">
           <Outlet />
@@ -21,6 +19,5 @@ function MainLayout(): JSX.Element {
     </div>
   );
 }
-
 
 export default MainLayout;

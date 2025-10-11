@@ -1,18 +1,31 @@
-import { JSX, useContext, useEffect } from "react";
+import { JSX, useContext } from "react";
 import { TopBarContext } from "../../context/TopBarcontext";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/AuthContext";
 import "./Topbar.css";
 
-function TopBar(): JSX.Element {
-  const { setContent } = useContext(TopBarContext);
-  useEffect(() => {
-    setContent(
-      <div className="topbar">
-        <h2>some placeholder text</h2>
-      </div>
-    );
-  }, [setContent]);
+interface TopBarProps {
+  username: string;
+}
 
-  return <div>bla bla bla</div>
+function TopBar({ username }: TopBarProps): JSX.Element {
+  const { content } = useContext(TopBarContext);
+  const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  function handleLogout() {
+    logout();
+    navigate("/login");
+  }
+
+  return (
+    <div className="topbar">
+      <div className="topbar-left">{content}</div>
+      <div className="topbar-right">
+        <button onClick={handleLogout}>Logout</button>
+      </div>
+    </div>
+  );
 }
 
 export default TopBar;
